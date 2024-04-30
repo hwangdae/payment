@@ -35,16 +35,24 @@ const items = [
   { id: "무통장 입금", label: "무통장 입금" },
 ];
 
+const totalPay = [
+  { id: "상품 가격", label: "상품 가격", money: "16,000원" },
+  { id: "쿠폰 할인", label: "쿠폰 할인", money: "16,000원" },
+  { id: "포인트 사용", label: "포인트 사용", money: "16,000원" },
+  { id: "배송비", label: "배송비", money: "4000원" },
+];
+type RegisterInput = z.infer<typeof registerSchema>;
+
 const index = () => {
-  const form = useForm<z.infer<typeof registerSchema>>({
+  const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  const onSubmit = () => {
-    return alert("a");
+  const onSubmit = (data: RegisterInput) => {
+    return alert(JSON.stringify(data, null, 2));
   };
   return (
     <div>
@@ -192,7 +200,7 @@ const index = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="address"
+                      name="DetailedAddress"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel></FormLabel>
@@ -213,25 +221,38 @@ const index = () => {
               <aside className="w-[30%]">
                 <section className="mb-5">
                   <h2>최종 결제금액</h2>
-                  <Table>
-                    <TableCaption>A list of your recent invoices.</TableCaption>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[100px]">Invoice</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Method</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell className="font-medium">INV001</TableCell>
-                        <TableCell>Paid</TableCell>
-                        <TableCell>Credit Card</TableCell>
-                        <TableCell className="text-right">$250.00</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                  <div className="mt-5 border p-5">
+                    <Table>
+                      <TableBody>
+                        {totalPay.map((pay) => {
+                          return (
+                            <TableRow key={pay.id}>
+                              <TableCell className="font-medium">
+                                {pay.label}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {pay.money}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                        <TableRow className={cn("bg-slate-100")}>
+                          <TableCell className="font-medium">
+                            총 결제금액
+                          </TableCell>
+                          <TableCell className="text-right font-bold text-blue-500">
+                            16,000원
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <div className="bg-slate-200 p-3">
+                    <p>
+                      <span className="text-blue-500 font-bold">160</span>{" "}
+                      포인트 적립 예정
+                    </p>
+                  </div>
                 </section>
                 <section>
                   <h2>결제 방법</h2>
@@ -283,13 +304,8 @@ const index = () => {
                       )}
                     />
                   </div>
-                  <div className="bg-slate-200 p-3">
-                    <p>
-                      <span className="text-blue-500 font-bold">160</span>{" "}
-                      포인트 적립 예정
-                    </p>
-                  </div>
                 </section>
+                <Button type="submit">결제하기</Button>
               </aside>
             </form>
           </Form>
