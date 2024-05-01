@@ -20,14 +20,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { registerSchema } from "@/valitators/delivery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import shortid from "shortid";
+import { merchandise } from "@/mockupData/Merchandise";
+import { coupons } from "@/mockupData/Coupon";
 
-const items = [
+const payItems = [
   { id: "토스페이", label: "토스페이" },
   { id: "핸드폰 결제", label: "핸드폰 결제" },
   { id: "카카오페이", label: "카카오페이" },
@@ -35,22 +47,28 @@ const items = [
   { id: "무통장 입금", label: "무통장 입금" },
 ];
 
-const totalPay = [
-  { id: "상품 가격", label: "상품 가격", money: "16,000원" },
-  { id: "쿠폰 할인", label: "쿠폰 할인", money: "16,000원" },
-  { id: "포인트 사용", label: "포인트 사용", money: "16,000원" },
-  { id: "배송비", label: "배송비", money: "4000원" },
-];
+// const totalPay:any = [
+//   { id: "상품 가격", label: "상품 가격", money: "16,000원" },
+//   { id: "쿠폰 할인", label: "쿠폰 할인", money: disCount },
+//   { id: "포인트 사용", label: "포인트 사용", money: "16,000원" },
+//   { id: "배송비", label: "배송비", money: "2500원" },
+// ];
 type RegisterInput = z.infer<typeof registerSchema>;
 
-const index = () => {
+const Home = () => {
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
     },
   });
-
+  console.log(form.getValues().coupon)
+  console.log(form.watch())
+  console.log(form.formState)
+  const disCount = coupons.find((coupon)=>{
+    return form.watch().coupon === coupon.id && coupon.disCountType === "won" ? 29000 - coupon.disCount : 29000/coupon.disCount
+  })
+  console.log(disCount)
   const onSubmit = (data: RegisterInput) => {
     return alert(JSON.stringify(data, null, 2));
   };
@@ -69,7 +87,19 @@ const index = () => {
               <div className="w-[70%]">
                 <section>
                   <h2>주문 상품 정보</h2>
-                  <div className="border p-5 my-5"></div>
+                  <div className="flex gap-5 border p-5 my-5">
+                    <h1>
+                      <img
+                        src="BIGTshirt.jpg"
+                        className="w-[75px] h-[75px]"
+                      ></img>
+                    </h1>
+                    <div>
+                      <h1>BIG 티셔츠</h1>
+                      <p>수량 : 1개</p>
+                      <p>29,000원</p>
+                    </div>
+                  </div>
                 </section>
                 <section>
                   <h2>주문자 정보</h2>
@@ -102,7 +132,7 @@ const index = () => {
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage />
+                          {/* <FormMessage /> */}
                         </FormItem>
                       )}
                     />
@@ -215,7 +245,50 @@ const index = () => {
                 </section>
                 <section>
                   <h2>쿠폰/포인트</h2>
-                  <div className="border p-5 my-5"></div>
+                  <div className="border p-5 my-5">
+                    <FormField
+                      control={form.control}
+                      name="coupon"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>쿠폰 할인</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="쿠폰 선택" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {coupons.map((coupon) => {
+                                return (
+                                  <SelectItem value={coupon.id}>
+                                    {coupon.label}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="point"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>적립금 사용</FormLabel>
+                          <FormControl>
+                            <Input placeholder="0" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </section>
               </div>
               <aside className="w-[30%]">
@@ -224,18 +297,16 @@ const index = () => {
                   <div className="mt-5 border p-5">
                     <Table>
                       <TableBody>
-                        {totalPay.map((pay) => {
-                          return (
-                            <TableRow key={pay.id}>
+
+                            <TableRow>
                               <TableCell className="font-medium">
-                                {pay.label}
+                                
                               </TableCell>
                               <TableCell className="text-right">
-                                {pay.money}
+                                {disCount?.disCount}
                               </TableCell>
                             </TableRow>
-                          );
-                        })}
+
                         <TableRow className={cn("bg-slate-100")}>
                           <TableCell className="font-medium">
                             총 결제금액
@@ -258,54 +329,25 @@ const index = () => {
                   <h2>결제 방법</h2>
                   <div className="mt-5 border p-5">
                     <h3 className="mb-5">결제 수단</h3>
-                    <FormField
-                      control={form.control}
-                      name="items"
-                      render={() => (
-                        <FormItem className={cn("flex flex-col")}>
-                          {items.map((item) => (
-                            <FormField
-                              key={item.id}
-                              control={form.control}
-                              name="items"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem
-                                    key={item.id}
-                                    className="flex flex-row items-start space-x-3 space-y-1 justify-start w-[100%]"
-                                  >
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(item.id)}
-                                        onCheckedChange={(checked) => {
-                                          return checked
-                                            ? field.onChange([
-                                                // ...field.value,
-                                                item.id,
-                                              ])
-                                            : field.onChange(
-                                                field.value?.filter(
-                                                  (value) => value !== item.id
-                                                )
-                                              );
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      {item.label}
-                                    </FormLabel>
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                          ))}
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <RadioGroup defaultValue="카카오페이">
+                      {payItems.map((item) => {
+                        return (
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value={item.id} id={item.id} />
+
+                            <Label htmlFor={item.id}>{item.label}</Label>
+                          </div>
+                        );
+                      })}
+                    </RadioGroup>
+                    <div className="">
+                      <h3 className="mb-5"></h3>
+                    </div>
                   </div>
                 </section>
-                <Button type="submit">결제하기</Button>
+                <Button type="submit" className={cn("w-[100%]")}>
+                  결제하기
+                </Button>
               </aside>
             </form>
           </Form>
@@ -315,4 +357,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Home;
