@@ -1,6 +1,13 @@
 import shortid from "shortid";
 
-export const coupons = [{
+export const coupons = [
+    {
+        id:shortid.generate(),
+        label:"쿠폰 적용 안함",
+        disCount:null,
+        disCountType:null,
+    }
+    ,{
     id:shortid.generate(),
     label:"천원 할인 쿠폰",
     disCount:1000,

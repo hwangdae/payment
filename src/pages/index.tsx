@@ -1,25 +1,17 @@
-import React from "react";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -27,17 +19,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { registerSchema } from "@/valitators/delivery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import shortid from "shortid";
-import { merchandise } from "@/mockupData/Merchandise";
 import { coupons } from "@/mockupData/Coupon";
+import { RegisterInput } from "@/types/register";
+import ProductInfomation from "@/components/payment/ProductInfomation";
+import shortid from "shortid";
+import {
+  loadPaymentWidget,
+  ANONYMOUS,
+  PaymentWidgetInstance,
+} from "@tosspayments/payment-widget-sdk";
+
+const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+const customerKey = "nB9woSe3EIpBH8XQxcfj3";
 
 const payItems = [
   { id: "토스페이", label: "토스페이" },
@@ -47,31 +46,119 @@ const payItems = [
   { id: "무통장 입금", label: "무통장 입금" },
 ];
 
-// const totalPay:any = [
-//   { id: "상품 가격", label: "상품 가격", money: "16,000원" },
-//   { id: "쿠폰 할인", label: "쿠폰 할인", money: disCount },
-//   { id: "포인트 사용", label: "포인트 사용", money: "16,000원" },
-//   { id: "배송비", label: "배송비", money: "2500원" },
-// ];
-type RegisterInput = z.infer<typeof registerSchema>;
-
 const Home = () => {
+  const [paymentWidget, setPaymentWidget] = useState<any>(null);
+  const paymentMethodsWidgetRef = useRef<any>(null);
+  const [price, setPrice] = useState<any>(22900);
+
+  useEffect(() => {
+    const fetchPaymentWidget = async () => {
+      try {
+        const loadedWidget = await loadPaymentWidget(
+          widgetClientKey,
+          customerKey
+        );
+        setPaymentWidget(loadedWidget);
+      } catch (error) {
+        console.error("Error fetching payment widget:", error);
+      }
+    };
+
+    fetchPaymentWidget();
+  }, []);
+
+  useEffect(() => {
+    if (paymentWidget == null) {
+      return;
+    }
+
+    const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
+      "#payment-widget",
+      { value: price },
+      { variantKey: "DEFAULT" }
+    );
+
+    paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });   //약관 동의 부분
+
+    paymentMethodsWidgetRef.current = paymentMethodsWidget;
+  }, [paymentWidget, price]);
+
+  useEffect(() => {
+    const paymentMethodsWidget = paymentMethodsWidgetRef.current;
+
+    if (paymentMethodsWidget == null) {
+      return;
+    }
+
+    paymentMethodsWidget.updateAmount(price);
+  }, [price]);
+
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
+      point:0,
     },
   });
-  console.log(form.getValues().coupon)
-  console.log(form.watch())
-  console.log(form.formState)
-  const disCount = coupons.find((coupon)=>{
-    return form.watch().coupon === coupon.id && coupon.disCountType === "won" ? 29000 - coupon.disCount : 29000/coupon.disCount
-  })
-  console.log(disCount)
-  const onSubmit = (data: RegisterInput) => {
-    return alert(JSON.stringify(data, null, 2));
+  let point = form.watch().point;
+  const myPoint = 3000;
+  const disCount = coupons.find((coupon) => {
+    return form.watch().coupon === coupon.id;
+  });
+  console.log(disCount);
+
+  const totalPay = () => {
+    // 할인과 포인트가 모두 정의되지 않은 경우, 가격 그대로 반환
+    if (disCount === undefined && point === undefined) {
+      return price;
+    }
+
+    // 포인트만 정의된 경우
+    if (disCount === undefined) {
+      if (point >= myPoint) {
+        point += myPoint;
+        return 0;
+      } else {
+        return price - point;
+      }
+    } else if (point === undefined) {
+      // 쿠폰만 정의된 경우
+      if (disCount.disCountType === "won") {
+        return price - disCount.disCount;
+      } else if (disCount.disCountType === "percent") {
+        return price - (price * disCount.disCount) / 100;
+      }
+    }
+
+    // 할인과 포인트가 모두 정의된 경우
+    if (disCount.disCountType === "won") {
+      return price - point - disCount.disCount;
+    } else if (disCount.disCountType === "percent") {
+      return price - price / disCount.disCount;
+    }
   };
+
+  console.log(form.watch());
+
+  const onSubmit = async (data: RegisterInput) => {
+    alert('a')
+    console.log(data);
+    try {
+      await paymentWidget?.requestPayment({
+        orderId: shortid.generate(),
+        orderName: "토스 티셔츠 외 2건",
+        customerName: "김토스",
+        customerEmail: "customer123@gmail.com",
+        customerMobilePhone: "01012341234",
+        successUrl: `${window.location.origin}/success`,
+        failUrl: `${window.location.origin}/fail`,
+      });
+    } catch (error) {
+      // 에러 처리하기
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <div className="m-5 border border-solid px-5">
@@ -85,22 +172,7 @@ const Home = () => {
               className={cn("flex justify-between gap-5")}
             >
               <div className="w-[70%]">
-                <section>
-                  <h2>주문 상품 정보</h2>
-                  <div className="flex gap-5 border p-5 my-5">
-                    <h1>
-                      <img
-                        src="BIGTshirt.jpg"
-                        className="w-[75px] h-[75px]"
-                      ></img>
-                    </h1>
-                    <div>
-                      <h1>BIG 티셔츠</h1>
-                      <p>수량 : 1개</p>
-                      <p>29,000원</p>
-                    </div>
-                  </div>
-                </section>
+                <ProductInfomation />
                 <section>
                   <h2>주문자 정보</h2>
                   <div className="border p-5 my-5">
@@ -132,7 +204,7 @@ const Home = () => {
                               {...field}
                             />
                           </FormControl>
-                          {/* <FormMessage /> */}
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -159,7 +231,7 @@ const Home = () => {
                   <div className="border p-5 my-5">
                     <FormField
                       control={form.control}
-                      name="name"
+                      name="deliveryName"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>이름</FormLabel>
@@ -172,7 +244,7 @@ const Home = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="ordername"
+                      name="orderName"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>배송지명(선택)</FormLabel>
@@ -185,7 +257,7 @@ const Home = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="phone"
+                      name="orderPhone"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>휴대폰</FormLabel>
@@ -264,7 +336,7 @@ const Home = () => {
                             <SelectContent>
                               {coupons.map((coupon) => {
                                 return (
-                                  <SelectItem value={coupon.id}>
+                                  <SelectItem key={coupon.id} value={coupon.id}>
                                     {coupon.label}
                                   </SelectItem>
                                 );
@@ -297,22 +369,47 @@ const Home = () => {
                   <div className="mt-5 border p-5">
                     <Table>
                       <TableBody>
-
-                            <TableRow>
-                              <TableCell className="font-medium">
-                                
-                              </TableCell>
-                              <TableCell className="text-right">
+                        <TableRow>
+                          <TableCell className="font-medium">
+                            상품 가격
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {price}원
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">
+                            쿠폰 할인
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {disCount === undefined ? (
+                              0
+                            ) : (
+                              <p>
                                 {disCount?.disCount}
-                              </TableCell>
-                            </TableRow>
-
+                                {disCount?.disCountType === "won" ? "원" : "%"}
+                              </p>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">
+                            적립금 사용
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {point === undefined ? "사용 안함" : `${point}원`}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell className="font-medium">배송비</TableCell>
+                          <TableCell className="text-right">2500원</TableCell>
+                        </TableRow>
                         <TableRow className={cn("bg-slate-100")}>
                           <TableCell className="font-medium">
                             총 결제금액
                           </TableCell>
                           <TableCell className="text-right font-bold text-blue-500">
-                            16,000원
+                            {totalPay()}원
                           </TableCell>
                         </TableRow>
                       </TableBody>
@@ -320,29 +417,15 @@ const Home = () => {
                   </div>
                   <div className="bg-slate-200 p-3">
                     <p>
-                      <span className="text-blue-500 font-bold">160</span>{" "}
+                      <span className="text-blue-500 font-bold">160</span>
                       포인트 적립 예정
                     </p>
                   </div>
                 </section>
                 <section>
-                  <h2>결제 방법</h2>
-                  <div className="mt-5 border p-5">
-                    <h3 className="mb-5">결제 수단</h3>
-                    <RadioGroup defaultValue="카카오페이">
-                      {payItems.map((item) => {
-                        return (
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value={item.id} id={item.id} />
-
-                            <Label htmlFor={item.id}>{item.label}</Label>
-                          </div>
-                        );
-                      })}
-                    </RadioGroup>
-                    <div className="">
-                      <h3 className="mb-5"></h3>
-                    </div>
+                  <div className="border">
+                    <div id="payment-widget" />
+                    <div id="agreement" />
                   </div>
                 </section>
                 <Button type="submit" className={cn("w-[100%]")}>
