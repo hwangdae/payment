@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,23 +19,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { registerSchema } from "@/valitators/delivery";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { coupons } from "@/mockupData/Coupon";
 import { RegisterInput } from "@/types/register";
-import ProductInfomation from "@/components/payment/ProductInfomation";
 import shortid from "shortid";
 import {
   loadPaymentWidget,
   ANONYMOUS,
   PaymentWidgetInstance,
 } from "@tosspayments/payment-widget-sdk";
+import ProductInfomation from "@/components/payment/ProductInfomation";
 
-const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-const customerKey = "nB9woSe3EIpBH8XQxcfj3";
+const widgetClientKey = "test_ck_LlDJaYngrooz1ZAyzm0nrezGdRpX";
+const customerKey = shortid.generate();
 
 const payItems = [
   { id: "토스페이", label: "토스페이" },
@@ -51,76 +48,83 @@ const Home = () => {
   const paymentMethodsWidgetRef = useRef<any>(null);
   const [price, setPrice] = useState<any>(22900);
 
-  useEffect(() => {
-    const fetchPaymentWidget = async () => {
-      try {
-        const loadedWidget = await loadPaymentWidget(
-          widgetClientKey,
-          customerKey
-        );
-        setPaymentWidget(loadedWidget);
-      } catch (error) {
-        console.error("Error fetching payment widget:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchPaymentWidget = async () => {
+  //     try {
+  //       const loadedWidget = await loadPaymentWidget(
+  //         widgetClientKey,
+  //         customerKey
+  //       );
+  //       setPaymentWidget(loadedWidget);
+  //     } catch (error) {
+  //       console.error("Error fetching payment widget:", error);
+  //     }
+  //   };
 
-    fetchPaymentWidget();
-  }, []);
+  //   fetchPaymentWidget();
+  // }, []);
 
-  useEffect(() => {
-    if (paymentWidget == null) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (paymentWidget == null) {
+  //     return;
+  //   }
 
-    const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
-      "#payment-widget",
-      { value: price },
-      { variantKey: "DEFAULT" }
-    );
+  //   const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
+  //     "#payment-widget",
+  //     { value: price },
+  //     { variantKey: "DEFAULT" }
+  //   );
 
-    paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });   //약관 동의 부분
+  //   paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" }); //약관 동의 부분
 
-    paymentMethodsWidgetRef.current = paymentMethodsWidget;
-  }, [paymentWidget, price]);
+  //   paymentMethodsWidgetRef.current = paymentMethodsWidget;
+  // }, [paymentWidget, price]);
 
-  useEffect(() => {
-    const paymentMethodsWidget = paymentMethodsWidgetRef.current;
+  // useEffect(() => {
+  //   const paymentMethodsWidget = paymentMethodsWidgetRef.current;
 
-    if (paymentMethodsWidget == null) {
-      return;
-    }
+  //   if (paymentMethodsWidget == null) {
+  //     return;
+  //   }
 
-    paymentMethodsWidget.updateAmount(price);
-  }, [price]);
+  //   paymentMethodsWidget.updateAmount(price);
+  // }, [price]);
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
-      point:0,
+      email:"",
+      phone:"",
+      deliveryName:"",
+      orderPhone:"",
+      landLinePhone:"",
+      address:"",
+      detailedAddress:"",
+      coupon:"",
+      point: "",
     },
   });
-  let point = form.watch().point;
-  const myPoint = 3000;
+  let point = Number(form.watch().point)
+
   const disCount = coupons.find((coupon) => {
     return form.watch().coupon === coupon.id;
   });
-  console.log(disCount);
+
+  const disCount2 = useMemo(()=>{
+    return coupons.find((coupon) => {
+      return form.watch().coupon === coupon.id;
+    });
+  },[coupons])
+  console.log("해당쿠폰", disCount);
+  console.log("해당쿠폰2", disCount2);
 
   const totalPay = () => {
-    // 할인과 포인트가 모두 정의되지 않은 경우, 가격 그대로 반환
-    if (disCount === undefined && point === undefined) {
-      return price;
+    if (disCount === undefined && point === 0) {
+      return price - 2500;
     }
-
-    // 포인트만 정의된 경우
-    if (disCount === undefined) {
-      if (point >= myPoint) {
-        point += myPoint;
-        return 0;
-      } else {
-        return price - point;
-      }
+    if (disCount === undefined || disCount.disCountType === undefined) {
+      return price - point;
     } else if (point === undefined) {
       // 쿠폰만 정의된 경우
       if (disCount.disCountType === "won") {
@@ -129,34 +133,34 @@ const Home = () => {
         return price - (price * disCount.disCount) / 100;
       }
     }
-
     // 할인과 포인트가 모두 정의된 경우
     if (disCount.disCountType === "won") {
       return price - point - disCount.disCount;
     } else if (disCount.disCountType === "percent") {
-      return price - price / disCount.disCount;
+      return price - price / disCount.disCount - point;
     }
   };
 
   console.log(form.watch());
+  console.log(form.getValues());
 
-  const onSubmit = async (data: RegisterInput) => {
-    alert('a')
+  const onSubmit = (data: RegisterInput) => {
+    alert("a");
     console.log(data);
-    try {
-      await paymentWidget?.requestPayment({
-        orderId: shortid.generate(),
-        orderName: "토스 티셔츠 외 2건",
-        customerName: "김토스",
-        customerEmail: "customer123@gmail.com",
-        customerMobilePhone: "01012341234",
-        successUrl: `${window.location.origin}/success`,
-        failUrl: `${window.location.origin}/fail`,
-      });
-    } catch (error) {
-      // 에러 처리하기
-      console.error(error);
-    }
+    // try {
+    //   await paymentWidget?.requestPayment({
+    //     orderId: shortid.generate(),
+    //     orderName: "토스 티셔츠 외 2건",
+    //     customerName: "김토스",
+    //     customerEmail: "customer123@gmail.com",
+    //     customerMobilePhone: "01012341234",
+    //     successUrl: `${window.location.origin}/success`,
+    //     failUrl: `${window.location.origin}/fail`,
+    //   });
+    // } catch (error) {
+    //   // 에러 처리하기
+    //   console.error(error);
+    // }
   };
 
   return (
@@ -244,19 +248,6 @@ const Home = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="orderName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>배송지명(선택)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="배송지명" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
                       name="orderPhone"
                       render={({ field }) => (
                         <FormItem>
@@ -302,7 +293,7 @@ const Home = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="DetailedAddress"
+                      name="detailedAddress"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel></FormLabel>
@@ -382,8 +373,9 @@ const Home = () => {
                             쿠폰 할인
                           </TableCell>
                           <TableCell className="text-right">
-                            {disCount === undefined ? (
-                              0
+                            {disCount === undefined ||
+                            disCount.disCountType === undefined ? (
+                              "쿠폰 적용 안함"
                             ) : (
                               <p>
                                 {disCount?.disCount}
@@ -397,7 +389,7 @@ const Home = () => {
                             적립금 사용
                           </TableCell>
                           <TableCell className="text-right">
-                            {point === undefined ? "사용 안함" : `${point}원`}
+                            {point === 0 ? "적립금 사용 안함" : `${point}원`}
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -428,10 +420,11 @@ const Home = () => {
                     <div id="agreement" />
                   </div>
                 </section>
-                <Button type="submit" className={cn("w-[100%]")}>
+
+              </aside>
+              <Button type="submit" className={cn("w-[100%]")}>
                   결제하기
                 </Button>
-              </aside>
             </form>
           </Form>
         </main>
