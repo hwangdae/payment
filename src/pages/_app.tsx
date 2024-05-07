@@ -54,8 +54,8 @@ const Pretendard = localFont({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={Pretendard.className}>
+    // <main className={Pretendard.className}>
       <Component {...pageProps} />
-    </main>
+    // </main>
   );
 }

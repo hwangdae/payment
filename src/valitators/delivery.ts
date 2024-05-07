@@ -9,9 +9,9 @@ export const registerSchema = z.object({
   landLinePhone: z.string().min(11,"연락처는 11자리여야 합니다.").max(11,"연락처는 11자리여야 합니다."),
   address: z.string().min(1,"배송지 주소를 입력해 주세요.").max(30),
   detailedAddress: z.string().min(1,"배송지 상세주소를 입력해 주세요.").max(30),
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
-  }),
-  coupon:z.string(),
-  point:z.string(),
+  // items: z.array(z.string()).refine((value) => value.some((item) => item), {
+  //   message: "You have to select at least one item.",
+  // }),
+  // coupon:z.string(),
+  // point:z.string(),
 });
