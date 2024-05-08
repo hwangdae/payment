@@ -76,4 +76,8 @@
     h2 {
       @apply text-xl
     }
+    li {
+      text-decoration: none;
+      list-style: none;
+    }
   }
