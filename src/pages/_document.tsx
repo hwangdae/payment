@@ -10,7 +10,7 @@ export default function Document() {
       <Head />
       <body>
         <Header/>
-        <div className='flex max-w-[1800px] mx-auto my-0 gap-4'>
+        <div className='flex max-w-[1800px] mx-auto my-4 gap-4'>
         <Sidebar/>
         <Main />
         </div>
