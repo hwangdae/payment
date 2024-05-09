@@ -1,9 +1,11 @@
 import shortid from "shortid";
 
-interface MerchandiseType {
+export interface MerchandiseType {
   id: string;
   category: string;
-  name: string;
+  image:string;
+  maker:string;
+  description:string;
   quantity: number;
   price: number;
 }
