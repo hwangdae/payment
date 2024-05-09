@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import "@/styles/globals.css";
 import localFont from "next/font/local";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const Pretendard = localFont({
   src: [
@@ -53,9 +54,12 @@ const Pretendard = localFont({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+  const queryClient = new QueryClient();
   return (
-    <main className={Pretendard.className}>
-      <Component {...pageProps} />
-    </main>
+    <QueryClientProvider client={queryClient}>
+      <main className={Pretendard.className}>
+        <Component {...pageProps} />
+      </main>
+    </QueryClientProvider>
   );
 }

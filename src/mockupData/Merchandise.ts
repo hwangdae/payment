@@ -1,15 +1,5 @@
 import shortid from "shortid";
 
-export interface MerchandiseType {
-  id: string;
-  category: string;
-  image:string;
-  maker:string;
-  description:string;
-  quantity: number;
-  price: number;
-}
-
 export const MERCHANDISES = [
   {
     id: shortid.generate(),

@@ -1,33 +1,22 @@
 'use client'
-import { MERCHANDISES, MerchandiseType } from "@/mockupData/Merchandise";
+import {getDetailMerchandise, getMerchandises} from "@/api/getMerchandises";
+import { MERCHANDISES } from "@/mockupData/Merchandise";
+import { MerchandiseType } from "@/types/mockupData";
 import { useParams, usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useQuery } from "react-query";
 
-interface Props {
-  params: string;
-}
-const Detail = (params:any) => {
-  // const [id,setId] = useState<string | string[] | undefined>("")
-  // console.log(params)
-  // useLayoutEffect(()=>{
-  //   const router = useRouter()
-  //   const {id} = router.query
-  //   setId(id)
-  // },[])
-  const param = useParams()
-  console.log(param)
+
+const Detail = () => {
   const router = useRouter()
   const {id} = router.query
-  // console.log(id)
+  console.log(id)
 
-
-
-  const merchandise = MERCHANDISES!.find((merchandise:MerchandiseType) => {
+  const merchandise = MERCHANDISES.find((merchandise:MerchandiseType) => {
     return merchandise.id === id;
   }) 
-
-  console.log(merchandise);
+  console.log(merchandise)
   return (
     <main>
       <div>
@@ -43,3 +32,11 @@ const Detail = (params:any) => {
 };
 
 export default Detail;
+
+export const getServerSideProps = async() => {
+  return {
+    props:{
+      
+    },
+  }
+}

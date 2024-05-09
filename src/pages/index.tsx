@@ -1,14 +1,19 @@
+'use client'
+import {getMerchandises} from "@/api/getMerchandises";
 import { MERCHANDISES } from "@/mockupData/Merchandise";
+import { MerchandiseType } from "@/types/mockupData";
+import axios from "axios";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 const Home = () => {
   const router = useRouter();
-  console.log(router)
+
   return (
     <main>
       <ul className="grid grid-cols-7 gap-4">
-        {MERCHANDISES.map((merchandise) => {
+        {MERCHANDISES.map((merchandise:MerchandiseType) => {
           return (
             <li key={merchandise.id} className="border" onClick={()=>router.push(`/detail/${merchandise.id}`)}>
               <div className="w-[145px] m-8">
