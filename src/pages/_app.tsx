@@ -2,6 +2,8 @@ import type { AppProps } from "next/app";
 import "@/styles/globals.css";
 import localFont from "next/font/local";
 import { QueryClient, QueryClientProvider } from "react-query";
+import Sidebar from "@/components/sidebar/Sidebar";
+import { useRouter } from "next/router";
 
 const Pretendard = localFont({
   src: [
@@ -55,11 +57,16 @@ const Pretendard = localFont({
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
+  const router = useRouter();
+  console.log(router);
   return (
     <QueryClientProvider client={queryClient}>
-      <main className={Pretendard.className}>
-        <Component {...pageProps} />
-      </main>
+      <body className={Pretendard.className}>
+        <div className="flex max-w-[1400px] mx-auto my-4 justify-between">
+          {router.pathname === "/" || router.pathname === "/detail/[id]" ? <Sidebar /> : null}
+          <Component {...pageProps} />
+        </div>
+      </body>
     </QueryClientProvider>
   );
 }
