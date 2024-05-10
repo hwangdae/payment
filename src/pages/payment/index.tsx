@@ -31,6 +31,8 @@ import {
 } from "@tosspayments/payment-widget-sdk";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ProductInfomation from "@/components/payment/ProductInfomation";
+import { useRouter } from "next/router";
+import { QueryType } from "@/types/queryType";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -87,6 +89,9 @@ const Payment = () => {
   const [paymentWidget, setPaymentWidget] = useState<any>(null);
   const paymentMethodsWidgetRef = useRef<any>(null);
   const [price, setPrice] = useState<number>(22900);
+
+  const router  = useRouter().query
+  console.log(router)
 
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {

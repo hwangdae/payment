@@ -43,7 +43,11 @@ const Detail = () => {
   })
   function onSubmit(data: z.infer<typeof FormSchema>) {
 
-    router.push('/payment')
+    router.push({pathname:'/payment',query:{
+        name:merchandise?.description,
+        size:form.getValues().size,
+        price:merchandise?.price
+    }})
   }
   console.log(form.getValues().size)
   return (

@@ -697,7 +697,7 @@
 
 "@tosspayments/payment-widget-sdk@^0.10.2":
   version "0.10.2"
-  resolved "https://registry.npmjs.org/@tosspayments/payment-widget-sdk/-/payment-widget-sdk-0.10.2.tgz"
+  resolved "https://registry.yarnpkg.com/@tosspayments/payment-widget-sdk/-/payment-widget-sdk-0.10.2.tgz#0e702fbd9f8c45ff4426da6fe076b7f75743ff9a"
   integrity sha512-0dpkEbnDXmvIwpHYm+YODpMhh/gAtvJRYOU5uikFQpM/XCkyZDXAP9C6pc+GhiT6NsWIKKFILwaSgAeL/UT3ow==
   dependencies:
     "@tosspayments/payment-widget__types" "1.0.1"

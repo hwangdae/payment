@@ -61,12 +61,12 @@ export default function App({ Component, pageProps }: AppProps) {
   console.log(router);
   return (
     <QueryClientProvider client={queryClient}>
-      <body className={Pretendard.className}>
+      <main className={Pretendard.className}>
         <div className="flex max-w-[1400px] mx-auto my-4 justify-between">
           {router.pathname === "/" || router.pathname === "/detail/[id]" ? <Sidebar /> : null}
           <Component {...pageProps} />
         </div>
-      </body>
+      </main>
     </QueryClientProvider>
   );
 }
