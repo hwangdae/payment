@@ -1,5 +1,4 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,57 +30,11 @@ import {
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ProductInfomation from "@/components/payment/ProductInfomation";
 import { useRouter } from "next/router";
-import { QueryType } from "@/types/queryType";
+import { coupons } from "@/mockupData/Coupon";
+import { registerSchema } from "@/valitators/delivery";
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  email: z.string().email("이메일 형식을 입력해주세요."),
-  phone: z.string(),
-  recipient: z.string(),
-  orderPhone: z.string(),
-  landLinePhone: z.string(),
-  address: z.string(),
-  detailedAddress: z.string(),
-  coupon: z.string(),
-  point: z.string(),
-});
-
-const coupons = [
-  {
-    id: shortid.generate(),
-    label: "쿠폰 적용 안함",
-    disCount: null,
-    disCountType: undefined,
-  },
-  {
-    id: shortid.generate(),
-    label: "천원 할인 쿠폰",
-    disCount: 1000,
-    disCountType: "won",
-  },
-  {
-    id: shortid.generate(),
-    label: "10% 할인 쿠폰",
-    disCount: 10,
-    disCountType: "percent",
-  },
-  {
-    id: shortid.generate(),
-    label: "오천원 할인 쿠폰",
-    disCount: 5000,
-    disCountType: "won",
-  },
-  {
-    id: shortid.generate(),
-    label: "5% 할인 쿠폰",
-    disCount: 5,
-    disCountType: "percent",
-  },
-];
-//  process.env.NEXT_PUBLIC_CLIENT_KEY 
-const widgetClientKey ="test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"
+//  process.env.NEXT_PUBLIC_CLIENT_KEY
+const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = shortid.generate();
 
 const Payment = () => {
@@ -90,9 +42,10 @@ const Payment = () => {
   const paymentMethodsWidgetRef = useRef<any>(null);
   const [price, setPrice] = useState<number>(22900);
 
-  const router  = useRouter().query
-  console.log(router)
-
+  const router = useRouter().query;
+  console.log(router);
+  //number 타입으로 넘겨도 string으로 넘어옴
+  // const {name,price,size} = router
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {
       try {
@@ -135,13 +88,13 @@ const Payment = () => {
     paymentMethodsWidget.updateAmount(price);
   }, [price]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
-      phone:"",
-      recipient:"",
+      phone: "",
+      recipient: "",
       orderPhone: "",
       landLinePhone: "",
       address: "",
@@ -178,11 +131,10 @@ const Payment = () => {
     }
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    const { name, email, phone } = values;
 
-    const {name,email,phone} = values
-
-     try {
+    try {
       await paymentWidget?.requestPayment({
         orderId: shortid.generate(),
         orderName: "토스 티셔츠 외 2건",
@@ -208,7 +160,7 @@ const Payment = () => {
           className={cn("flex justify-between gap-5")}
         >
           <div className="w-[70%]">
-            <ProductInfomation/>
+            <ProductInfomation />
             <section>
               <h2>주문자 정보</h2>
               <div className="border p-5 my-5">
@@ -430,7 +382,9 @@ const Payment = () => {
                 <div id="agreement" />
               </div>
             </section>
-            <Button className={cn("w-[100%] bg-blue-500 py-6")} type="submit">결제하기</Button>
+            <Button className={cn("w-[100%] bg-blue-500 py-6")} type="submit">
+              결제하기
+            </Button>
           </aside>
         </form>
       </Form>

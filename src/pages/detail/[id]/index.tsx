@@ -1,11 +1,8 @@
 "use client";
-import { getDetailMerchandise, getMerchandises } from "@/api/getMerchandises";
 import { MERCHANDISES } from "@/mockupData/Merchandise";
 import { MerchandiseType } from "@/types/mockupData";
-import { useParams, usePathname } from "next/navigation";
 import { useRouter } from "next/router";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Query, useQuery } from "react-query";
+import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -46,7 +43,7 @@ const Detail = () => {
     router.push({pathname:'/payment',query:{
         name:merchandise?.description,
         size:form.getValues().size,
-        price:merchandise?.price
+        price:Number(merchandise?.price)
     }})
   }
   console.log(form.getValues().size)
