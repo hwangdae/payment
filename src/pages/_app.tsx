@@ -59,13 +59,14 @@ export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
   const router = useRouter();
   console.log(router);
+  const maincss = `${router.pathname === "/" || router.pathname === "/detail/[id]" ? 'flex max-w-[1400px] mx-auto my-4 justify-between' : '' }`
   return (
     <QueryClientProvider client={queryClient}>
-      <main className={Pretendard.className}>
-        <div className="flex max-w-[1400px] mx-auto my-4 justify-between">
-          {router.pathname === "/" || router.pathname === "/detail/[id]" ? <Sidebar /> : null}
+      <main className={`${Pretendard.className} ${maincss}`}>
+          {router.pathname === "/" || router.pathname === "/detail/[id]" ? (
+            <Sidebar />
+          ) : null}
           <Component {...pageProps} />
-        </div>
       </main>
     </QueryClientProvider>
   );
