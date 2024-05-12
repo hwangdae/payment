@@ -2,7 +2,7 @@
 import { MERCHANDISES } from "@/mockupData/Merchandise";
 import { MerchandiseType } from "@/types/mockupData";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -22,14 +22,19 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils";
+
+
 const Detail = () => {
   const router = useRouter();
   const { id } = router.query;
+  const [quantity,setQuantity] = useState<any>(1)
+  const [selectValue,setSelectValue] = useState("")
+  const [items,setItems] = useState([])
 
   const merchandise = MERCHANDISES.find((merchandise: MerchandiseType) => {
     return merchandise.id === id;
   });
-
+  console.log(merchandise,"상품 정보")
   const FormSchema = z.object({
     size: z
       .string()
@@ -38,15 +43,24 @@ const Detail = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit({size}: z.infer<typeof FormSchema>) {
+    console.log(size)
+    // if(size === null){
+    //   alert("옵션을 선택해 주세요.");
+    //   return ;
+    // }
 
-    router.push({pathname:'/payment',query:{
-        name:merchandise?.description,
-        size:form.getValues().size,
-        price:Number(merchandise?.price)
-    }})
+    // router.push({pathname:'/payment',query:{
+    //     name:merchandise?.description,
+    //     size:form.getValues().size,
+    //     price:Number(merchandise?.price)
+    // }})
   }
-  console.log(form.getValues().size)
+
+  const plusButtonHandler = () => {
+    setQuantity(quantity + 1)
+  }
+
   return (
     <main className=" w-[100%]">
       <h2 className="bg-gray-200 p-4 font-bold">{merchandise?.maker}</h2>
@@ -100,7 +114,12 @@ const Detail = () => {
           name="size"
           render={({ field }) => (
             <FormItem className={cn("w-[100%]")}>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={
+                (value)=>{setSelectValue(value)
+                  field.onChange
+                }}
+                defaultValue={field.value}
+                >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="옵션 선택" />
@@ -112,15 +131,23 @@ const Detail = () => {
                   <SelectItem value="XL">XL</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
+        <div className="flex justify-between">
+          <span>{selectValue}</span>
+          <div className="flex gap-2">
+            <button onClick={plusButtonHandler}>+</button>
+          <p>{quantity}</p>
+            <button>-</button>
+            </div>
+            <div className="flex gap-2"><p>22900원</p><button>X</button></div>
+        </div>
         <Button type="submit" className={cn("w-[100%]")}>구매하기</Button>
       </form>
     </Form>
           </div>
-
         </div>
       </div>
     </main>

@@ -4,6 +4,6 @@ export interface MerchandiseType {
     image:string;
     maker:string;
     description:string;
-    quantity: number;
+    quantity: number | undefined;
     price: number;
   }
