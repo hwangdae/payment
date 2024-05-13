@@ -36,15 +36,21 @@ const Detail = () => {
   });
 
   const addItemList = (value: string) => {
-    if (merchandise && selectedValue) {
-      const itemToAdd = {
-        ...merchandise,
-        id:shortid.generate(),
-        size: value,
-      };
-      setItems([...items, itemToAdd]);
+    if (
+      items.find((item: MerchandiseType) => {
+        return item.size === value;
+      })
+    ) {
+      return;
     }
+    const itemToAdd = {
+      ...merchandise,
+      id: shortid.generate(),
+      size: value,
+    };
+    setItems([...items, itemToAdd]);
   };
+
   console.log(items);
   const FormSchema = z.object({
     size: z.string({ message: "옵션을 선택해 주세요." }),
@@ -65,10 +71,30 @@ const Detail = () => {
     });
   }
 
-  const plusButtonHandler = (itemId:string) => {
-    setItems((prevItems:any) =>
+  const plusButtonHandler = (itemId: string) => {
+    setItems((prevItems: any) =>
       prevItems.map((item: any) =>
-        item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === itemId
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+              price: Number(merchandise?.price) * (item.quantity + 1),
+            }
+          : item
+      )
+    );
+  };
+
+  const minusButtonHandler = (itemId: string) => {
+    setItems((prevItems: any) =>
+      prevItems.map((item: any) =>
+        item.id === itemId && item.quantity > 1
+          ? {
+              ...item,
+              quantity: item.quantity - 1,
+              price: Number(merchandise?.price) * (item.quantity - 1),
+            }
+          : item
       )
     );
   };
@@ -157,7 +183,34 @@ const Detail = () => {
                     </FormItem>
                   )}
                 />
-                <ul>
+                 {items.map((item: any) => {
+                  return (
+                    <div key={item.id} className="flex justify-between border">
+                      <span>{item.size}</span>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => plusButtonHandler(item.id)}
+                        >
+                          +
+                        </button>
+                        <p>{item.quantity}</p>
+                        <button
+                          type="button"
+                          onClick={() => minusButtonHandler(item.id)}
+                        >
+                          -
+                        </button>
+                      </div>
+                      <div className="flex gap-2">
+                        <p>{item.price.toLocaleString()}원</p>
+                        <button onClick={()=>{
+                          
+                        }}>X</button>
+                      </div>
+                    </div>
+                  );
+                })}
                   <div>
                     <div className="flex items-center mb-3 justify-between border p-3">
                       <span className="w-[80px]">총 상품 금액</span>
@@ -165,27 +218,7 @@ const Detail = () => {
                         {merchandise?.price.toLocaleString()} 원
                       </p>
                     </div>
-                  </div>
-                </ul>
-                {items.map((item:any) => {
-                  return (
-                    <div key={item.id} className="flex justify-between">
-                      <span>{item.size}</span>
-                      <div className="flex gap-2">
-                        <button type="button" onClick={()=>plusButtonHandler(item.id)}>
-                          +
-                        </button>
-                        <p>{item.quantity}</p>
-                        <button>-</button>
-                      </div>
-                      <div className="flex gap-2">
-                        <p>22900원</p>
-                        <button>X</button>
-                      </div>
-                    </div>
-                  );
-                })}
-
+                  </div>  
                 <Button type="submit" className={cn("w-[100%]")}>
                   구매하기
                 </Button>
