@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { useRouter } from "next/router";
+import {RecoilRoot} from 'recoil'
 
 const Pretendard = localFont({
   src: [
@@ -56,18 +57,20 @@ const Pretendard = localFont({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
+  // const queryClient = new QueryClient();
   const router = useRouter();
   console.log(router);
   const maincss = `${router.pathname === "/" || router.pathname === "/detail/[id]" ? 'flex max-w-[1400px] mx-auto my-4 justify-between' : '' }`
   return (
-    <QueryClientProvider client={queryClient}>
+    // <QueryClientProvider client={queryClient}>
+    <RecoilRoot>
       <main className={`${Pretendard.className} ${maincss}`}>
           {router.pathname === "/" || router.pathname === "/detail/[id]" ? (
             <Sidebar />
           ) : null}
           <Component {...pageProps} />
       </main>
-    </QueryClientProvider>
+      </RecoilRoot>
+    // </QueryClientProvider>
   );
 }
