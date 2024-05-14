@@ -4,7 +4,6 @@ import React from "react";
 import { useRecoilState } from "recoil";
 import shortid from "shortid";
 
-
 const CATEGORIES = [
   { id: shortid.generate(), label: "전체", subLabel: "All", category: "all" },
   {
@@ -35,20 +34,28 @@ const CATEGORIES = [
 ];
 
 const Sidebar = () => {
-  const [,setSelectedCategory] = useRecoilState(categoryState)
+  const [selectedCategory, setSelectedCategory] = useRecoilState(categoryState);
   return (
     <aside className="w-[260px] border">
-      <ul className="px-4 py-1">
-        {CATEGORIES.map((category:CategoryType) => {
+      <ul>
+        {CATEGORIES.map((category: CategoryType) => {
           return (
             <li
-              className="py-3 px-1 border-b-1 text-sm font-bold hover:bg-gray-100"
+              className={`px-4 py-3 text-sm font-bold hover:bg-slate-50 ${
+                selectedCategory === category.category ? "text-red-300" : ""
+              }`}
               key={category.id}
-            ><button onClick={()=>{setSelectedCategory(category.category)}}>
-              {category.label}
-              <span className="text-gray-300 ml-2 font-normal">
-                {category.subLabel}
-              </span></button>
+            >
+              <button
+                onClick={() => {
+                  setSelectedCategory(category.category);
+                }}
+              >
+                {category.label}
+                <span className="text-gray-300 ml-2 font-normal">
+                  {category.subLabel}
+                </span>
+              </button>
             </li>
           );
         })}

@@ -53,7 +53,7 @@ export const MERCHANDISES = [
   },
   {
     id: "0NLkx--0as",
-    category: "pantspants",
+    category: "pants",
     image: "/images/LAFUDGE.jpg",
     maker: "트래블",
     description: "카펜터 버뮤다 스웨트 8부 팬츠 블랙",
