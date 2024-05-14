@@ -1,5 +1,6 @@
 import { categoryState } from "@/Recoil/categoryState";
 import { CategoryType } from "@/types/categoryType";
+import { useRouter } from "next/router";
 import React from "react";
 import { useRecoilState } from "recoil";
 import shortid from "shortid";
@@ -35,8 +36,19 @@ const CATEGORIES = [
 
 const Sidebar = () => {
   const [selectedCategory, setSelectedCategory] = useRecoilState(categoryState);
+  const router = useRouter();
+
+  const selectedCategoryButtonHandler = (category: string) => {
+    if(router.route === "/"){
+      setSelectedCategory(category)
+    }else{
+      router.push("/")
+      setSelectedCategory(category)
+    }
+    
+  };
   return (
-    <aside className="w-[260px] border">
+    <aside className="w-[260px] h-[100%] border">
       <ul>
         {CATEGORIES.map((category: CategoryType) => {
           return (
@@ -47,9 +59,7 @@ const Sidebar = () => {
               key={category.id}
             >
               <button
-                onClick={() => {
-                  setSelectedCategory(category.category);
-                }}
+                onClick={() => selectedCategoryButtonHandler(category.category)}
               >
                 {category.label}
                 <span className="text-gray-300 ml-2 font-normal">

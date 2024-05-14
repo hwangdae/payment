@@ -81,8 +81,8 @@ const Detail = () => {
   }
 
   const plusButtonHandler = (itemId: string) => {
-    setItems((prevItems: any) =>
-      prevItems.map((item: any) =>
+    setItems((prevItems: MerchandiseType[]) =>
+      prevItems.map((item: MerchandiseType) =>
         item.id === itemId
           ? {
               ...item,
@@ -93,14 +93,10 @@ const Detail = () => {
       )
     );
   };
-  console.log(
-    items.map((item: any) => {
-      return item.price;
-    })
-  );
+
   const minusButtonHandler = (itemId: string) => {
-    setItems((prevItems: any) =>
-      prevItems.map((item: any) =>
+    setItems((prevItems: MerchandiseType[]) =>
+      prevItems.map((item: MerchandiseType) =>
         item.id === itemId && item.quantity > 1
           ? {
               ...item,

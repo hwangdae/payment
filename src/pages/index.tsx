@@ -8,7 +8,7 @@ import { useRecoilValue } from "recoil";
 
 const Home = () => {
   const category = useRecoilValue(categoryState);
-  console.log(category);
+
   return (
     <main>
       <ul className="grid grid-cols-5 gap-4">
