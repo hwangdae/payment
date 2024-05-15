@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import shortid from "shortid";
+import { useRecoilState } from "recoil";
+import { merchandisesState } from "@/Recoil/recoilState";
 
 interface ItemsType {
   id: string;
@@ -73,11 +75,11 @@ const Detail = () => {
     router.push({
       pathname: "/payment",
       query: {
-        name: merchandise?.description,
-        size,
-        price: Number(merchandise?.price),
+        items : JSON.stringify(items)
       },
-    });
+    },
+    '/payment'
+  );
   }
 
   const plusButtonHandler = (itemId: string) => {

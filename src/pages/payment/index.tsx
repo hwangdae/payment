@@ -32,6 +32,9 @@ import ProductInfomation from "@/components/payment/ProductInfomation";
 import { useRouter } from "next/router";
 import { coupons } from "@/mockupData/Coupon";
 import { registerSchema } from "@/valitators/delivery";
+import { useRecoilValue } from "recoil";
+import { merchandisesState } from "@/Recoil/recoilState";
+import { MerchandiseType } from "@/types/mockupData";
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
 const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -41,11 +44,15 @@ const Payment = () => {
   const [paymentWidget, setPaymentWidget] = useState<any>(null);
   const paymentMethodsWidgetRef = useRef<any>(null);
   const [price, setPrice] = useState<number>(22900);
+  // const items = useRecoilValue(merchandisesState)
 
-  const router = useRouter().query;
-  console.log(router);
-  //number 타입으로 넘겨도 string으로 넘어옴
-  // const {name,price,size} = router
+  // console.log(items)
+
+  const router = useRouter()
+  const itemsQueryParam = router.query.items as string
+  const items = JSON.parse(itemsQueryParam)
+
+  console.log(items)
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {
       try {
@@ -160,7 +167,10 @@ const Payment = () => {
           className={cn("flex justify-between gap-5")}
         >
           <div className="w-[70%]">
-            <ProductInfomation />
+            {/* {items.map((item:MerchandiseType)=>{
+
+            })} */}
+            <ProductInfomation items={items}/>
             <section>
               <h2>주문자 정보</h2>
               <div className="border p-5 my-5">

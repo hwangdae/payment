@@ -1,10 +1,11 @@
 "use client";
-import { categoryState } from "@/Recoil/categoryState";
+import { useRecoilValue } from "recoil";
+import { categoryState } from "@/Recoil/recoilState";
 import Merchandise from "@/components/main/Merchandise";
 import { MERCHANDISES } from "@/mockupData/Merchandise";
 import { MerchandiseType } from "@/types/mockupData";
 import React from "react";
-import { useRecoilValue } from "recoil";
+
 
 const Home = () => {
   const category = useRecoilValue(categoryState);

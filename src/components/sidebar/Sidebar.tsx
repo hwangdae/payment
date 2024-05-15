@@ -1,4 +1,4 @@
-import { categoryState } from "@/Recoil/categoryState";
+import { categoryState } from "@/Recoil/recoilState";
 import { CategoryType } from "@/types/categoryType";
 import { useRouter } from "next/router";
 import React from "react";
@@ -39,13 +39,12 @@ const Sidebar = () => {
   const router = useRouter();
 
   const selectedCategoryButtonHandler = (category: string) => {
-    if(router.route === "/"){
-      setSelectedCategory(category)
-    }else{
-      router.push("/")
-      setSelectedCategory(category)
+    if (router.route === "/") {
+      setSelectedCategory(category);
+    } else {
+      router.push("/");
+      setSelectedCategory(category);
     }
-    
   };
   return (
     <aside className="w-[260px] h-[100%] border">
