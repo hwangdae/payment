@@ -32,9 +32,10 @@ import ProductInfomation from "@/components/payment/ProductInfomation";
 import { useRouter } from "next/router";
 import { coupons } from "@/mockupData/Coupon";
 import { registerSchema } from "@/valitators/delivery";
+import { MerchandiseType } from "@/types/mockupData";
 import { useRecoilValue } from "recoil";
 import { merchandisesState } from "@/Recoil/recoilState";
-import { MerchandiseType } from "@/types/mockupData";
+import { useToast } from "@/components/ui/use-toast";
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
 const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -43,16 +44,26 @@ const customerKey = shortid.generate();
 const Payment = () => {
   const [paymentWidget, setPaymentWidget] = useState<any>(null);
   const paymentMethodsWidgetRef = useRef<any>(null);
-  const [price, setPrice] = useState<number>(22900);
-  // const items = useRecoilValue(merchandisesState)
-
-  // console.log(items)
+  const items = useRecoilValue(merchandisesState)
+  const [userPoint,setUserPoint] = useState(5000)
+  const { toast } = useToast()
 
   const router = useRouter()
-  const itemsQueryParam = router.query.items as string
-  const items = JSON.parse(itemsQueryParam)
 
   console.log(items)
+
+  const price = items.map((item:MerchandiseType)=>{
+    return item.price
+  }).reduce((acc:number,curr:number)=>{
+    return  acc + curr
+  },0)
+
+  useEffect(()=>{
+    if(items.length <=0){
+      router.push('/')
+    }
+  },[])
+
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {
       try {
@@ -111,7 +122,15 @@ const Payment = () => {
     },
   });
   let point = Number(form.getValues().point);
-
+  let point2 = Number(form.watch().point)
+  // console.log(point)
+  console.log(point2)
+  console.log(form.setValue)
+  if(point2 > userPoint){
+    return toast({
+      description:"보유하신 포인트를 초과했습니다."
+    })
+  }
   const disCount = coupons.find((coupon) => {
     return form.getValues().coupon === coupon.id;
   });
@@ -167,9 +186,6 @@ const Payment = () => {
           className={cn("flex justify-between gap-5")}
         >
           <div className="w-[70%]">
-            {/* {items.map((item:MerchandiseType)=>{
-
-            })} */}
             <ProductInfomation items={items}/>
             <section>
               <h2>주문자 정보</h2>
@@ -332,7 +348,7 @@ const Payment = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /><span>보유 적립금 : {userPoint}원</span>
               </div>
             </section>
           </div>
@@ -344,7 +360,7 @@ const Payment = () => {
                   <TableBody>
                     <TableRow>
                       <TableCell className="font-medium">상품 가격</TableCell>
-                      <TableCell className="text-right">{price}원</TableCell>
+                      <TableCell className="text-right">{price.toLocaleString()}원</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-medium">쿠폰 할인</TableCell>
@@ -373,7 +389,7 @@ const Payment = () => {
                     <TableRow className={cn("bg-slate-100")}>
                       <TableCell className="font-medium">총 결제금액</TableCell>
                       <TableCell className="text-right font-bold text-blue-500">
-                        {totalPay()}원
+                        {totalPay()?.toLocaleString()}원
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -403,3 +419,9 @@ const Payment = () => {
 };
 
 export default Payment;
+
+export const getServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};

@@ -10,10 +10,10 @@ const ProductInfomation = ({ items }: PropsType) => {
   return (
     <section>
       <h2>주문 상품 정보</h2>
-      <div className="border">
+      <div className="border  my-5">
       {items.map((item: MerchandiseType) => {
         return (
-          <div className="flex gap-5 border p-2 my-5">
+          <div className="flex gap-5 border p-2 m-2">
             <h1 className="border p-1">
               <img src={item.image} className="w-[75px] h-[75px]"></img>
             </h1>

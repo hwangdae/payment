@@ -40,7 +40,7 @@ interface ItemsType {
 const Detail = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [items, setItems] = useState<any>([]);
+  const [items, setItems] = useRecoilState<any>(merchandisesState);
 
   const merchandise = MERCHANDISES.find((merchandise: MerchandiseType) => {
     return merchandise.id === id;
@@ -71,15 +71,9 @@ const Detail = () => {
     resolver: zodResolver(FormSchema),
   });
 
-  function onSubmit({ size }: z.infer<typeof FormSchema>) {
-    router.push({
-      pathname: "/payment",
-      query: {
-        items : JSON.stringify(items)
-      },
-    },
-    '/payment'
-  );
+  function onSubmit() {
+    sessionStorage.setItem('items',items);
+    router.push("/payment");
   }
 
   const plusButtonHandler = (itemId: string) => {
@@ -112,7 +106,9 @@ const Detail = () => {
 
   return (
     <main className="w-[80%]">
-      <h2 className="bg-gray-900 p-4 font-bold text-white">{merchandise?.maker}</h2>
+      <h2 className="bg-gray-900 p-4 font-bold text-white">
+        {merchandise?.maker}
+      </h2>
       <h2 className="py-4 font-bold">{merchandise?.description}</h2>
       <div className="flex gap-4">
         <h1 className="flex align-center justify-center border h-[600px]">
