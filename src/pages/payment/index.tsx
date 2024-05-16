@@ -36,6 +36,7 @@ import { MerchandiseType } from "@/types/mockupData";
 import { useRecoilValue } from "recoil";
 import { merchandisesState } from "@/Recoil/recoilState";
 import { useToast } from "@/components/ui/use-toast";
+import axios from "axios";
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
 const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -44,7 +45,7 @@ const customerKey = shortid.generate();
 const Payment = () => {
   const [paymentWidget, setPaymentWidget] = useState<any>(null);
   const paymentMethodsWidgetRef = useRef<any>(null);
-  const items = useRecoilValue(merchandisesState)
+  const [items,setItems] = useState<any[]>([])
   const [userPoint,setUserPoint] = useState(5000)
   const { toast } = useToast()
 
@@ -59,11 +60,25 @@ const Payment = () => {
   },0)
 
   useEffect(()=>{
-    if(items.length <=0){
-      router.push('/')
+    const fetch = async() => {
+      const {data} = await axios.get('http://localhost:4000/items')
+      console.log(data)
+      setItems(data)
     }
+    fetch()
+    return (()=>{
+      const delItems = async() => {
+        try {
+          const response = await axios.delete('http://localhost:4000/items');
+          console.log(response.data); // 서버에서 받은 응답 데이터 로깅
+        } catch (error) {
+          console.error('Error deleting items:', error);
+        }
+      }
+      delItems()
+    })
   },[])
-
+  console.log(router)
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {
       try {
@@ -126,11 +141,7 @@ const Payment = () => {
   // console.log(point)
   console.log(point2)
   console.log(form.setValue)
-  if(point2 > userPoint){
-    return toast({
-      description:"보유하신 포인트를 초과했습니다."
-    })
-  }
+
   const disCount = coupons.find((coupon) => {
     return form.getValues().coupon === coupon.id;
   });

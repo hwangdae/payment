@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { useRouter } from "next/router";
 import {RecoilRoot} from 'recoil'
+import { useEffect } from "react";
+import axios from "axios";
 
 const Pretendard = localFont({
   src: [

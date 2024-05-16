@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import shortid from "shortid";
 import { useRecoilState } from "recoil";
 import { merchandisesState } from "@/Recoil/recoilState";
+import axios from "axios";
 
 interface ItemsType {
   id: string;
@@ -40,18 +41,14 @@ interface ItemsType {
 const Detail = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [items, setItems] = useRecoilState<any>(merchandisesState);
+  const [items, setItems] = useState<any>([]);
 
   const merchandise = MERCHANDISES.find((merchandise: MerchandiseType) => {
     return merchandise.id === id;
   });
 
   const addItemList = (value: string) => {
-    if (
-      items.find((item: MerchandiseType) => {
-        return item.size === value;
-      })
-    ) {
+    if (items.find((item:MerchandiseType) => item.size === value)) {
       return;
     }
     const itemToAdd = {
@@ -59,10 +56,10 @@ const Detail = () => {
       id: shortid.generate(),
       size: value,
     };
+
     setItems([...items, itemToAdd]);
   };
 
-  console.log(items);
   const FormSchema = z.object({
     size: z.string({ message: "옵션을 선택해 주세요." }),
   });
@@ -72,7 +69,9 @@ const Detail = () => {
   });
 
   function onSubmit() {
-    sessionStorage.setItem('items',items);
+    items.map((item:MerchandiseType)=>{
+      return axios.post('http://localhost:4000/items',item)
+    })
     router.push("/payment");
   }
 

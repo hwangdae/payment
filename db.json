@@ -1,4 +1,5 @@
-{"MERCHANDISES" : [
+{
+  "MERCHANDISES": [
     {
       "id": "hX2BTPkNH",
       "category": "top",
@@ -91,6 +92,15 @@
     }
   ],
   "items": [
-    
+    {
+      "id": "ZwYrFSBLg",
+      "category": "pants",
+      "image": "/images/codegraphy.jpg",
+      "maker": "디스펑트",
+      "description": "미니멀 트레이닝 essential 원턱 반바지",
+      "size": "M",
+      "quantity": 2,
+      "price": 64000
+    }
   ]
 }
