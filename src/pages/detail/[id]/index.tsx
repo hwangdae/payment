@@ -69,9 +69,10 @@ const Detail = () => {
   });
 
   function onSubmit() {
-    items.map((item:MerchandiseType)=>{
-      return axios.post('http://localhost:4000/items',item)
-    })
+    // items.map((item:MerchandiseType)=>{
+    //   return axios.post('http://localhost:4000/items',item)
+    // })
+    
     router.push("/payment");
   }
 

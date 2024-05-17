@@ -33,10 +33,17 @@ import { useRouter } from "next/router";
 import { coupons } from "@/mockupData/Coupon";
 import { registerSchema } from "@/valitators/delivery";
 import { MerchandiseType } from "@/types/mockupData";
-import { useRecoilValue } from "recoil";
-import { merchandisesState } from "@/Recoil/recoilState";
-import { useToast } from "@/components/ui/use-toast";
-import axios from "axios";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
 const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -45,40 +52,24 @@ const customerKey = shortid.generate();
 const Payment = () => {
   const [paymentWidget, setPaymentWidget] = useState<any>(null);
   const paymentMethodsWidgetRef = useRef<any>(null);
-  const [items,setItems] = useState<any[]>([])
-  const [userPoint,setUserPoint] = useState(5000)
-  const { toast } = useToast()
+  const [items, setItems] = useState<any[]>([]);
+  const [a, setA] = useState<number>(0);
+  const [userPoint, setUserPoint] = useState(5000);
 
-  const router = useRouter()
+  const router = useRouter();
 
-  console.log(items)
+  console.log(items);
 
-  const price = items.map((item:MerchandiseType)=>{
-    return item.price
-  }).reduce((acc:number,curr:number)=>{
-    return  acc + curr
-  },0)
-
-  useEffect(()=>{
-    const fetch = async() => {
-      const {data} = await axios.get('http://localhost:4000/items')
-      console.log(data)
-      setItems(data)
-    }
-    fetch()
-    return (()=>{
-      const delItems = async() => {
-        try {
-          const response = await axios.delete('http://localhost:4000/items');
-          console.log(response.data); // 서버에서 받은 응답 데이터 로깅
-        } catch (error) {
-          console.error('Error deleting items:', error);
-        }
-      }
-      delItems()
+  const price = items
+    .map((item: MerchandiseType) => {
+      return item.price;
     })
-  },[])
-  console.log(router)
+    .reduce((acc: number, curr: number) => {
+      return acc + curr;
+    }, 0);
+
+ 
+  console.log(router);
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {
       try {
@@ -137,10 +128,9 @@ const Payment = () => {
     },
   });
   let point = Number(form.getValues().point);
-  let point2 = Number(form.watch().point)
+  let point2 = Number(form.watch().point);
   // console.log(point)
-  console.log(point2)
-  console.log(form.setValue)
+  console.log(point2);
 
   const disCount = coupons.find((coupon) => {
     return form.getValues().coupon === coupon.id;
@@ -191,13 +181,31 @@ const Payment = () => {
       <header className="border-b-2 mb-5">
         <h1 className="text-4xl font-[700] py-5">Order/Payment</h1>
       </header>
+      <AlertDialog>
+      <AlertDialogTrigger asChild>
+        {point2 > userPoint}
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className={cn("flex justify-between gap-5")}
         >
           <div className="w-[70%]">
-            <ProductInfomation items={items}/>
+            <ProductInfomation items={items} />
             <section>
               <h2>주문자 정보</h2>
               <div className="border p-5 my-5">
@@ -347,6 +355,18 @@ const Payment = () => {
                     </FormItem>
                   )}
                 />
+                <div className="flex items-center justify-between mt-2">
+                <label className="text-[14px] font-medium">적립금 사용</label>
+                <input
+                className="flex h-10 w-[90%] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={a} onChange={(e:any)=>{setA(e.target.value)
+                  if(a >= userPoint){
+                    alert("aaaaa")
+                    setA(0)
+                    return ;
+                  }
+                }}></input>
+                </div>
                 <FormField
                   control={form.control}
                   name="point"
@@ -359,7 +379,8 @@ const Payment = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                /><span>보유 적립금 : {userPoint}원</span>
+                />
+                <span>보유 적립금 : {userPoint}원</span>
               </div>
             </section>
           </div>
@@ -371,7 +392,9 @@ const Payment = () => {
                   <TableBody>
                     <TableRow>
                       <TableCell className="font-medium">상품 가격</TableCell>
-                      <TableCell className="text-right">{price.toLocaleString()}원</TableCell>
+                      <TableCell className="text-right">
+                        {price.toLocaleString()}원
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-medium">쿠폰 할인</TableCell>
@@ -390,7 +413,7 @@ const Payment = () => {
                     <TableRow>
                       <TableCell className="font-medium">적립금 사용</TableCell>
                       <TableCell className="text-right">
-                        {point === 0 ? "적립금 사용 안함" : `${point}원`}
+                        {a === 0 ? "적립금 사용 안함" : `${a}원`}
                       </TableCell>
                     </TableRow>
                     <TableRow>
