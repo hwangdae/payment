@@ -43,7 +43,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
 const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -52,14 +52,19 @@ const customerKey = shortid.generate();
 const Payment = () => {
   const [paymentWidget, setPaymentWidget] = useState<any>(null);
   const paymentMethodsWidgetRef = useRef<any>(null);
-  const [items, setItems] = useState<any[]>([]);
-  const [a, setA] = useState<number>(0);
+  // const [items, setItems] = useState<any[]>([]);
+  const [point, setPoint] = useState<number>(0);
   const [userPoint, setUserPoint] = useState(5000);
 
   const router = useRouter();
+  const items = JSON.parse(router.query.items as string)
 
-  console.log(items);
-
+  useLayoutEffect(()=>{
+    if(items == undefined){
+      router.push('/')
+    }
+  },[])
+  console.log(point)
   const price = items
     .map((item: MerchandiseType) => {
       return item.price;
@@ -68,8 +73,7 @@ const Payment = () => {
       return acc + curr;
     }, 0);
 
- 
-  console.log(router);
+
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {
       try {
@@ -127,10 +131,6 @@ const Payment = () => {
       point: "",
     },
   });
-  let point = Number(form.getValues().point);
-  let point2 = Number(form.watch().point);
-  // console.log(point)
-  console.log(point2);
 
   const disCount = coupons.find((coupon) => {
     return form.getValues().coupon === coupon.id;
@@ -181,24 +181,6 @@ const Payment = () => {
       <header className="border-b-2 mb-5">
         <h1 className="text-4xl font-[700] py-5">Order/Payment</h1>
       </header>
-      <AlertDialog>
-      <AlertDialogTrigger asChild>
-        {point2 > userPoint}
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -356,18 +338,27 @@ const Payment = () => {
                   )}
                 />
                 <div className="flex items-center justify-between mt-2">
-                <label className="text-[14px] font-medium">적립금 사용</label>
-                <input
-                className="flex h-10 w-[90%] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={a} onChange={(e:any)=>{setA(e.target.value)
-                  if(a >= userPoint){
-                    alert("aaaaa")
-                    setA(0)
-                    return ;
-                  }
-                }}></input>
+                  <label className="text-[14px] font-medium">적립금 사용</label>
+                  <input
+                    className="flex h-10 w-[90%] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={point}
+                    onChange={(e: any) => {
+                      const newPoint = parseInt(e.target.value, 10); // 입력 값을 정수로 변환
+                      if (isNaN(newPoint) || newPoint < 0) {
+                        alert("적립금은 양수이어야 합니다.");
+                        return;
+                      }
+                      if (newPoint >= userPoint) {
+                        alert("보유 적립금을 초과하였습니다.");
+                        setPoint(0);
+                        return;
+                      }
+                      setPoint(newPoint);
+                    }}
+                  />
+                  <span className="text-[14px]">보유 적립금 {userPoint}원</span>
                 </div>
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="point"
                   render={({ field }) => (
@@ -379,8 +370,7 @@ const Payment = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-                <span>보유 적립금 : {userPoint}원</span>
+                /> */}
               </div>
             </section>
           </div>
@@ -413,7 +403,7 @@ const Payment = () => {
                     <TableRow>
                       <TableCell className="font-medium">적립금 사용</TableCell>
                       <TableCell className="text-right">
-                        {a === 0 ? "적립금 사용 안함" : `${a}원`}
+                        {point === 0 ? "적립금 사용 안함" : `${point}원`}
                       </TableCell>
                     </TableRow>
                     <TableRow>

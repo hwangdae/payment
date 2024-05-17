@@ -48,7 +48,7 @@ const Detail = () => {
   });
 
   const addItemList = (value: string) => {
-    if (items.find((item:MerchandiseType) => item.size === value)) {
+    if (items.find((item: MerchandiseType) => item.size === value)) {
       return;
     }
     const itemToAdd = {
@@ -72,8 +72,11 @@ const Detail = () => {
     // items.map((item:MerchandiseType)=>{
     //   return axios.post('http://localhost:4000/items',item)
     // })
-    
-    router.push("/payment");
+
+    router.push(
+      { pathname: "/payment", query: { items: JSON.stringify(items) } },
+      "/payment"
+    );
   }
 
   const plusButtonHandler = (itemId: string) => {
