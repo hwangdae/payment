@@ -33,17 +33,7 @@ import { useRouter } from "next/router";
 import { coupons } from "@/mockupData/Coupon";
 import { registerSchema } from "@/valitators/delivery";
 import { MerchandiseType } from "@/types/mockupData";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
 const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -52,19 +42,26 @@ const customerKey = shortid.generate();
 const Payment = () => {
   const [paymentWidget, setPaymentWidget] = useState<any>(null);
   const paymentMethodsWidgetRef = useRef<any>(null);
-  // const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [point, setPoint] = useState<number>(0);
   const [userPoint, setUserPoint] = useState(5000);
 
   const router = useRouter();
-  const items = JSON.parse(router.query.items as string)
-
+  const {id} = router.query
   useLayoutEffect(()=>{
-    if(items == undefined){
-      router.push('/')
+    try {
+      const queryItems = router.query.items ? JSON.parse(router.query.items as string) : undefined;
+      if (!queryItems) {
+        router.push("/");
+      } else {
+        setItems(queryItems);
+      }
+    } catch (error) {
+      console.error("Failed to parse items:", error);
+      router.push("/");
     }
-  },[])
-  console.log(point)
+  },[router])
+
   const price = items
     .map((item: MerchandiseType) => {
       return item.price;
@@ -128,7 +125,7 @@ const Payment = () => {
       address: "",
       detailedAddress: "",
       coupon: "",
-      point: "",
+      // point: "",
     },
   });
 
@@ -164,12 +161,12 @@ const Payment = () => {
     try {
       await paymentWidget?.requestPayment({
         orderId: shortid.generate(),
-        orderName: "토스 티셔츠 외 2건",
+        orderName: items.length === 1 ? items[0].description :`${items[0].description} 외 ${items.length}`,
         customerName: name,
         customerEmail: email,
         customerMobilePhone: phone,
-        successUrl: `${window.location.origin}/success`,
-        failUrl: `${window.location.origin}/fail`,
+        successUrl: `${window.location.origin}/payment/success`,
+        failUrl: `${window.location.origin}/payment/fail`,
       });
     } catch (error) {
       console.error(error);
@@ -344,8 +341,8 @@ const Payment = () => {
                     value={point}
                     onChange={(e: any) => {
                       const newPoint = parseInt(e.target.value, 10); // 입력 값을 정수로 변환
-                      if (isNaN(newPoint) || newPoint < 0) {
-                        alert("적립금은 양수이어야 합니다.");
+                      if (isNaN(newPoint) || newPoint <= 0) {
+                        setPoint(0);
                         return;
                       }
                       if (newPoint >= userPoint) {
@@ -356,7 +353,7 @@ const Payment = () => {
                       setPoint(newPoint);
                     }}
                   />
-                  <span className="text-[14px]">보유 적립금 {userPoint}원</span>
+                  <p className="text-[14px]">보유 적립금 <span className="text-orange-500 font-bold">{userPoint.toLocaleString()}</span>원</p>
                 </div>
                 {/* <FormField
                   control={form.control}
@@ -421,7 +418,7 @@ const Payment = () => {
               </div>
               <div className="bg-slate-200 p-3">
                 <p>
-                  <span className="text-blue-500 font-bold">160</span>
+                  <span className="text-blue-500 font-bold">{price * 0.01} </span>
                   포인트 적립 예정
                 </p>
               </div>

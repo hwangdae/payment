@@ -10,5 +10,5 @@ export const registerSchema = z.object({
   address: z.string().min(1,"배송지 주소를 입력해 주세요.").max(30),
   detailedAddress: z.string().min(1,"배송지 상세주소를 입력해 주세요.").max(30),
   coupon: z.string(),
-  point: z.string(),
+  // point: z.string(),
 });

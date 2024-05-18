@@ -74,7 +74,7 @@ const Detail = () => {
     // })
 
     router.push(
-      { pathname: "/payment", query: { items: JSON.stringify(items) } },
+      { pathname: "/payment", query: {id, items: JSON.stringify(items) } },
       "/payment"
     );
   }

@@ -1,6 +1,9 @@
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { Router, useRouter } from "next/router";
 
 // ------ Payment 객체 ------
 // @docs https://docs.tosspayments.com/reference#payment-객체
@@ -33,7 +36,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
       {
         headers: {
-          Authorization: `Basic ${Buffer.from(`${process.env.TOSS_PAYMENTS_SECRET_KEY}:`).toString("base64")}`,
+          Authorization: `Basic ${Buffer.from(
+            `${process.env.TOSS_PAYMENTS_SECRET_KEY}:`
+          ).toString("base64")}`,
         },
       }
     );
@@ -46,7 +51,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
       redirect: {
-        destination: `/fail?code=${err.response.data.code}&message=${encodeURIComponent(err.response.data.message)}`,
+        destination: `/fail?code=${
+          err.response.data.code
+        }&message=${encodeURIComponent(err.response.data.message)}`,
         permanent: false,
       },
     };
@@ -58,36 +65,57 @@ interface Props {
 }
 
 export default function SuccessPage({ payment }: Props) {
+  const router = useRouter();
   return (
     <main>
-      <div className="box_section" style={{ width: "600px" }}>
-        <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
-        <h2>결제를 완료했어요</h2>
-        <div className="p-grid typography--p" style={{ marginTop: "50px" }}>
-          <div className="p-grid-col text--left">
-            <b>결제금액</b>
+      <div className="mx-auto border shadow-sm p-5 rounded-md mt-[6%]" style={{ width: "600px" }}>
+        <div className="flex flex-col items-center">
+          <img
+            width="100px"
+            src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png"
+          />
+          <h2 className="text-2xl">결제를 완료했어요</h2>
+        </div>
+        <div className="my-5 p-7 border rounded-md">
+          <div className="p-grid typography--p" style={{ marginTop: "0px" }}>
+            <div className="p-grid-col text--left">
+              <b>주문번호</b>
+            </div>
+            <span className="p-grid-col text--right" id="orderId">
+              {payment.orderId}
+            </span>
           </div>
-          <div className="p-grid-col text--right" id="amount">
-            {payment.totalAmount.toLocaleString()}원
+          <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
+            <div className="p-grid-col text--left">
+              <b>결제금액</b>
+            </div>
+            <div className="p-grid-col text--right" id="amount">
+              {payment.totalAmount.toLocaleString()}원
+            </div>
+          </div>
+          <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
+            <div className="p-grid-col text--left">
+              <b>주문정보</b>
+            </div>
+            <div className="p-grid-col text--right" id="orderId">
+              {payment.orderName}
+            </div>
           </div>
         </div>
-        <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
-          <div className="p-grid-col text--left">
-            <b>주문번호</b>
-          </div>
-          <div className="p-grid-col text--right" id="orderId">
-            {payment.orderId}
-          </div>
+        <div className="flex justify-center">
+          <Button onClick={() => router.push("/")}>
+            메인페이지로 이동하기
+          </Button>
         </div>
-        <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
+        {/* <div className="p-grid typography--p" style={{ marginTop: "10px" }}>
           <div className="p-grid-col text--left">
             <b>paymentKey</b>
           </div>
           <div className="p-grid-col text--right" id="paymentKey" style={{ whiteSpace: "initial", width: "250px" }}>
             {payment.paymentKey}
           </div>
-        </div>
-        <div className="p-grid-col">
+        </div> */}
+        {/* <div className="p-grid-col">
           <Link href="https://docs.tosspayments.com/guides/payment-widget/integration">
             <button className="button p-grid-col5">연동 문서</button>
           </Link>
@@ -96,14 +124,17 @@ export default function SuccessPage({ payment }: Props) {
               실시간 문의
             </button>
           </Link>
-        </div>
+        </div> */}
       </div>
-      <div className="box_section" style={{ width: "600px", textAlign: "left" }}>
+      {/* <div
+        className="box_section"
+        style={{ width: "600px", textAlign: "left" }}
+      >
         <b>Response Data :</b>
         <div id="response" style={{ whiteSpace: "initial" }}>
           {payment && <pre>{JSON.stringify(payment, null, 4)}</pre>}
         </div>
-      </div>
+      </div> */}
     </main>
   );
 }
