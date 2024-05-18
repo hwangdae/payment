@@ -8,3 +8,10 @@ export interface MerchandiseType {
     size:string;
     price: number;
   }
+
+  export interface CouponType {
+      id: string;
+      label: string;
+      disCount: number | undefined;
+      disCountType: string | undefined;
+  }

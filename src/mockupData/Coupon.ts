@@ -4,7 +4,7 @@ export const coupons = [
   {
     id: shortid.generate(),
     label: "쿠폰 적용 안함",
-    disCount: null,
+    disCount: 0,
     disCountType: undefined,
   },
   {

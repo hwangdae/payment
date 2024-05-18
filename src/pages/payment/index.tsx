@@ -32,7 +32,8 @@ import ProductInfomation from "@/components/payment/ProductInfomation";
 import { useRouter } from "next/router";
 import { coupons } from "@/mockupData/Coupon";
 import { registerSchema } from "@/valitators/delivery";
-import { MerchandiseType } from "@/types/mockupData";
+import { CouponType, MerchandiseType } from "@/types/mockupData";
+import { totalPay } from "@/valitators/totalPay";
 
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
@@ -47,8 +48,8 @@ const Payment = () => {
   const [userPoint, setUserPoint] = useState(5000);
 
   const router = useRouter();
-  const {id} = router.query
-  useLayoutEffect(()=>{
+
+  useEffect(()=>{
     try {
       const queryItems = router.query.items ? JSON.parse(router.query.items as string) : undefined;
       if (!queryItems) {
@@ -61,6 +62,7 @@ const Payment = () => {
       router.push("/");
     }
   },[router])
+
 
   const price = items
     .map((item: MerchandiseType) => {
@@ -125,35 +127,12 @@ const Payment = () => {
       address: "",
       detailedAddress: "",
       coupon: "",
-      // point: "",
     },
   });
 
-  const disCount = coupons.find((coupon) => {
+  const disCount = coupons.find((coupon:CouponType) => {
     return form.getValues().coupon === coupon.id;
   });
-
-  const totalPay = () => {
-    if (disCount === undefined && point === 0) {
-      return price - 2500;
-    }
-    if (disCount === undefined || disCount.disCountType === undefined) {
-      return price - point;
-    } else if (point === undefined) {
-      // 쿠폰만 정의된 경우
-      if (disCount.disCountType === "won") {
-        return price - disCount.disCount;
-      } else if (disCount.disCountType === "percent") {
-        return price - (price * disCount.disCount) / 100;
-      }
-    }
-    // 할인과 포인트가 모두 정의된 경우
-    if (disCount.disCountType === "won") {
-      return price - point - disCount.disCount;
-    } else if (disCount.disCountType === "percent") {
-      return price - price / disCount.disCount - point;
-    }
-  };
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     const { name, email, phone } = values;
@@ -355,19 +334,6 @@ const Payment = () => {
                   />
                   <p className="text-[14px]">보유 적립금 <span className="text-orange-500 font-bold">{userPoint.toLocaleString()}</span>원</p>
                 </div>
-                {/* <FormField
-                  control={form.control}
-                  name="point"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>적립금 사용</FormLabel>
-                      <FormControl>
-                        <Input placeholder="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
               </div>
             </section>
           </div>
@@ -410,7 +376,7 @@ const Payment = () => {
                     <TableRow className={cn("bg-slate-100")}>
                       <TableCell className="font-medium">총 결제금액</TableCell>
                       <TableCell className="text-right font-bold text-blue-500">
-                        {totalPay()?.toLocaleString()}원
+                        {totalPay(disCount,price,point)?.toLocaleString()}원
                       </TableCell>
                     </TableRow>
                   </TableBody>
