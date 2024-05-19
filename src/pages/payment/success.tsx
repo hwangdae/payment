@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import axios from "axios";
 import { GetServerSideProps } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // ------ Payment 객체 ------
 // @docs https://docs.tosspayments.com/reference#payment-객체
@@ -71,8 +68,7 @@ export default function SuccessPage({ payment }: Props) {
     <main>
       <div className="mx-auto border shadow-sm p-5 rounded-md mt-[6%]" style={{ width: "600px" }}>
         <div className="flex flex-col items-center">
-          <Image
-            priority={true}
+          <img
             width={100}
             src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png"
             alt="결제 완료 체크 이미지"

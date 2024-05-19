@@ -130,10 +130,12 @@ const Payment = () => {
     },
   });
 
-  const disCount = coupons.find((coupon:CouponType) => {
-    return form.getValues().coupon === coupon.id;
+  const disCount = coupons.find((coupon) => {
+    return form.watch().coupon === coupon.id;
   });
-
+  console.log(form.getValues().coupon)
+  console.log(form.watch().coupon)
+  console.log(disCount)
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     const { name, email, phone } = values;
 
@@ -319,12 +321,12 @@ const Payment = () => {
                     className="flex h-10 w-[90%] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={point}
                     onChange={(e: any) => {
-                      const newPoint = parseInt(e.target.value, 10); // 입력 값을 정수로 변환
+                      const newPoint = parseInt(e.target.value, 10)
                       if (isNaN(newPoint) || newPoint <= 0) {
                         setPoint(0);
                         return;
                       }
-                      if (newPoint >= userPoint) {
+                      if (newPoint > userPoint) {
                         alert("보유 적립금을 초과하였습니다.");
                         setPoint(0);
                         return;
