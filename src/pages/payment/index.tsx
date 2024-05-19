@@ -37,7 +37,7 @@ import { totalPay } from "@/valitators/totalPay";
 
 
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
-const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+const widgetClientKey = "test_ck_LlDJaYngrooz1ZAyzm0nrezGdRpX";
 const customerKey = shortid.generate();
 
 const Payment = () => {
