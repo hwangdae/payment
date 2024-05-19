@@ -32,7 +32,7 @@ import ProductInfomation from "@/components/payment/ProductInfomation";
 import { useRouter } from "next/router";
 import { coupons } from "@/mockupData/Coupon";
 import { registerSchema } from "@/valitators/delivery";
-import { CouponType, MerchandiseType } from "@/types/mockupData";
+import { CouponType, MerchandiseType } from "@/types/mockupDataType";
 import { totalPay } from "@/valitators/totalPay";
 
 
@@ -61,7 +61,7 @@ const Payment = () => {
       console.error("Failed to parse items:", error);
       router.push("/");
     }
-  },[router])
+  },[])
 
 
   const price = items

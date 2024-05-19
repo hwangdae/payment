@@ -1,4 +1,4 @@
-import { MerchandiseType } from "@/types/mockupData";
+import { MerchandiseType } from "@/types/mockupDataType";
 import React from "react";
 
 interface MerchandiseProps {

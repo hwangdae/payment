@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil";
 import { categoryState } from "@/Recoil/recoilState";
 import Merchandise from "@/components/main/Merchandise";
 import { MERCHANDISES } from "@/mockupData/Merchandise";
-import { MerchandiseType } from "@/types/mockupData";
+import { MerchandiseType } from "@/types/mockupDataType";
 import React from "react";
 
 

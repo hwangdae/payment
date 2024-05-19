@@ -1,38 +1,10 @@
 import { categoryState } from "@/Recoil/recoilState";
+import { CATEGORIES } from "@/mockupData/categories";
 import { CategoryType } from "@/types/categoryType";
 import { useRouter } from "next/router";
 import React from "react";
 import { useRecoilState } from "recoil";
-import shortid from "shortid";
 
-const CATEGORIES = [
-  { id: shortid.generate(), label: "전체", subLabel: "All", category: "all" },
-  {
-    id: shortid.generate(),
-    label: "아우터",
-    subLabel: "Outer",
-    category: "outer",
-  },
-  { id: shortid.generate(), label: "상의", subLabel: "Top", category: "top" },
-  {
-    id: shortid.generate(),
-    label: "하의",
-    subLabel: "Pants",
-    category: "pants",
-  },
-  {
-    id: shortid.generate(),
-    label: "모자",
-    subLabel: "Headwear",
-    category: "headwear",
-  },
-  {
-    id: shortid.generate(),
-    label: "신발",
-    subLabel: "Shoes",
-    category: "shoes",
-  },
-];
 
 const Sidebar = () => {
   const [selectedCategory, setSelectedCategory] = useRecoilState(categoryState);

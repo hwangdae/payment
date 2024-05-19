@@ -1,5 +1,3 @@
-import shortid from "shortid";
-
 export const MERCHANDISES = [
   {
     id: "hX2BTPkNH",

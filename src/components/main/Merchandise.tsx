@@ -1,4 +1,4 @@
-import { MerchandiseType } from "@/types/mockupData";
+import { MerchandiseType } from "@/types/mockupDataType";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
@@ -17,7 +17,7 @@ const Merchandise = ({ merchandise }: PropsType) => {
     >
       <div className="w-[145px] m-8">
         <h1 className="mb-3">
-          <Image width={145} height={174} src={image} alt="상품 이미지" />
+          <img width={145} height={174} src={image} alt="상품 이미지" />
         </h1>
         <h2 className="text-sm font-bold mb-1">{maker}</h2>
         <h2 className="text-sm whitespace-normal leading-4 mb-1">

@@ -1,5 +1,5 @@
 import React from "react";
-import { MerchandiseType } from "@/types/mockupData";
+import { MerchandiseType } from "@/types/mockupDataType";
 
 interface MerchandiseProps {
   merchandise: MerchandiseType | undefined;

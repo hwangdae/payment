@@ -1,4 +1,4 @@
-import { MerchandiseType } from "@/types/mockupData";
+import { MerchandiseType } from "@/types/mockupDataType";
 import React from "react";
 
 interface PropsType {
@@ -6,8 +6,7 @@ interface PropsType {
 }
 
 const ProductInfomation = ({ items }: PropsType) => {
-  // const {id,category,image,maker,description,price,quantity,size} = items
-  console.log("프로덕트 렌더링")
+
   return (
     <section>
       <h2>주문 상품 정보</h2>
