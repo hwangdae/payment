@@ -14,7 +14,7 @@ const Pretendard = localFont({
       style: "nomal",
     },
     {
-      path: "../fonts/Pretendard-Extrabold.woff2",
+      path: "../fonts/Pretendard-ExtraBold.woff2",
       weight: "800",
       style: "nomal",
     },
