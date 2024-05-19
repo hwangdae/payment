@@ -24,7 +24,7 @@ const Detail = () => {
       <h2 className="py-4 font-bold">{merchandise?.description}</h2>
       <div className="flex gap-4">
         <h1 className="flex align-center justify-center border h-[600px]">
-          <Image width={500} height={600} src={merchandise!.image} alt="상품 이미지" />
+          <Image priority={true} width={500} height={600} src={merchandise!.image} alt="상품 이미지" />
         </h1>
         <div className="w-[35%]">
           <ProductInfo merchandise={merchandise} />

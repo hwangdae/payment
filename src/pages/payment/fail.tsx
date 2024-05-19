@@ -8,7 +8,7 @@ export default function FailPage() {
   return (
     <main>
       <div id="info" className="box_section" style={{ width: "600px" }}>
-        <Image width={100} src="https://static.toss.im/lotties/error-spot-no-loop-space-apng.png" alt="에러 이미지" />
+        <Image priority={true} width={100} src="https://static.toss.im/lotties/error-spot-no-loop-space-apng.png" alt="에러 이미지" />
         <h2>결제를 실패했어요</h2>
 
         <div className="p-grid typography--p" style={{ marginTop: "50px" }}>
