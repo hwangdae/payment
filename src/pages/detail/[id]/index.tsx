@@ -6,6 +6,7 @@ import ProductInfo from "@/components/detailMerchandise/ProductInfo";
 import DeliveryInfo from "@/components/detailMerchandise/DeliveryInfo";
 import PriceInfo from "@/components/detailMerchandise/PriceInfo";
 import SelectForm from "@/components/detailMerchandise/SelectForm";
+import Image from "next/image";
 
 const Detail = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const Detail = () => {
       <h2 className="py-4 font-bold">{merchandise?.description}</h2>
       <div className="flex gap-4">
         <h1 className="flex align-center justify-center border h-[600px]">
-          <img src={merchandise?.image} alt="상품 이미지" />
+          <Image width={500} height={600} src={merchandise!.image} alt="상품 이미지" />
         </h1>
         <div className="w-[35%]">
           <ProductInfo merchandise={merchandise} />

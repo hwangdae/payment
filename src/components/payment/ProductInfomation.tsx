@@ -1,4 +1,5 @@
 import { MerchandiseType } from "@/types/mockupDataType";
+import Image from "next/image";
 import React from "react";
 
 interface PropsType {
@@ -15,7 +16,7 @@ const ProductInfomation = ({ items }: PropsType) => {
         return (
           <div key={item.id} className="flex gap-5 border p-2 m-2">
             <h1 className="border p-1">
-              <img src={item.image} className="w-[75px] h-[75px]"></img>
+              <Image width={75} height={75} src={item.image} alt="주문 상품 정보"/>
             </h1>
             <div>
 
