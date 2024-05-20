@@ -1,11 +1,4 @@
-
-export interface DisCountType {
-    id: string;
-    label: string;
-    disCount: number;
-    disCountType: string | undefined;
-}
-
+import { DisCountType } from "@/types/discoutType";
 
 export const totalPay = (disCount:DisCountType | undefined,price:number,point:number) => {
     if (disCount === undefined && point === 0) {
@@ -25,6 +18,6 @@ export const totalPay = (disCount:DisCountType | undefined,price:number,point:nu
     if (disCount.disCountType === "won") {
       return price - point - disCount?.disCount;
     } else if (disCount.disCountType === "percent") {
-      return price - price / disCount?.disCount - point;
+      return price - point - price / disCount?.disCount ;
     }
   };

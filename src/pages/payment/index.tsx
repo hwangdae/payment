@@ -32,7 +32,7 @@ import ProductInfomation from "@/components/payment/ProductInfomation";
 import { useRouter } from "next/router";
 import { coupons } from "@/mockupData/Coupon";
 import { registerSchema } from "@/valitators/delivery";
-import { CouponType, MerchandiseType } from "@/types/mockupDataType";
+import { MerchandiseType } from "@/types/mockupDataType";
 import { totalPay } from "@/valitators/totalPay";
 
 
@@ -45,7 +45,7 @@ const Payment = () => {
   const paymentMethodsWidgetRef = useRef<any>(null);
   const [items, setItems] = useState<any[]>([]);
   const [point, setPoint] = useState<number>(0);
-  const [userPoint, setUserPoint] = useState(5000);
+  const userPoint = 5000;
 
   const router = useRouter();
 
@@ -58,7 +58,7 @@ const Payment = () => {
         setItems(queryItems);
       }
     } catch (error) {
-      console.error("Failed to parse items:", error);
+      console.error(error);
       router.push("/");
     }
   },[])
@@ -133,9 +133,7 @@ const Payment = () => {
   const disCount = coupons.find((coupon) => {
     return form.watch().coupon === coupon.id;
   });
-  console.log(form.getValues().coupon)
-  console.log(form.watch().coupon)
-  console.log(disCount)
+
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     const { name, email, phone } = values;
 
@@ -316,11 +314,13 @@ const Payment = () => {
                   )}
                 />
                 <div className="flex items-center justify-between mt-2">
-                  <label className="text-[14px] font-medium">적립금 사용</label>
+                  <label htmlFor="point" className="text-[14px] font-medium">적립금 사용</label>
                   <input
                     className="flex h-10 w-[90%] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="point"
+                    name="point"
                     value={point}
-                    onChange={(e: any) => {
+                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => {
                       const newPoint = parseInt(e.target.value, 10)
                       if (isNaN(newPoint) || newPoint <= 0) {
                         setPoint(0);

@@ -89,14 +89,4 @@ export const MERCHANDISES = [
     quantity: 1,
     price: 39000,
   },
-  {
-    id: "9Ez_oCDfb5",
-    category: "outer",
-    image: "/images/zipupjacket.jpg",
-    maker: "플레이스 스튜디오",
-    description: "오버사이즈 유틸리티 코튼 블루종 집업 자켓 [블랙]",
-    size:"",
-    quantity: 1,
-    price: 99000,
-  },
 ];

@@ -45,7 +45,7 @@ const SelectForm = ({ merchandise }: MerchandiseProps) => {
     if (items.find((item: MerchandiseType) => item.size === value)) {
       return;
     }
-    const itemToAdd = {
+    const itemToAdd= {
       ...merchandise,
       id: shortid.generate(),
       size: value,
@@ -56,7 +56,7 @@ const SelectForm = ({ merchandise }: MerchandiseProps) => {
 
   const price = items
     .map((item: MerchandiseType) => {
-      return item.price;
+      return item?.price;
     })
     .reduce((acc: number, curr: number) => {
       return acc + curr;

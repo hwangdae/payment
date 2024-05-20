@@ -3,7 +3,7 @@ export interface MerchandiseType {
     category: string;
     image:string;
     maker:string;
-    description:string;
+    description?:string;
     quantity: number;
     size:string;
     price: number;
