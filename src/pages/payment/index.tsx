@@ -35,7 +35,6 @@ import { registerSchema } from "@/valitators/delivery";
 import { MerchandiseType } from "@/types/mockupDataType";
 import { totalPay } from "@/valitators/totalPay";
 
-
 //  process.env.NEXT_PUBLIC_CLIENT_KEY
 const widgetClientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = shortid.generate();
@@ -49,9 +48,11 @@ const Payment = () => {
 
   const router = useRouter();
 
-  useEffect(()=>{
+  useEffect(() => {
     try {
-      const queryItems = router.query.items ? JSON.parse(router.query.items as string) : undefined;
+      const queryItems = router.query.items
+        ? JSON.parse(router.query.items as string)
+        : undefined;
       if (!queryItems) {
         router.push("/");
       } else {
@@ -61,8 +62,7 @@ const Payment = () => {
       console.error(error);
       router.push("/");
     }
-  },[])
-
+  }, []);
 
   const price = items
     .map((item: MerchandiseType) => {
@@ -71,7 +71,6 @@ const Payment = () => {
     .reduce((acc: number, curr: number) => {
       return acc + curr;
     }, 0);
-
 
   useLayoutEffect(() => {
     const fetchPaymentWidget = async () => {
@@ -140,7 +139,10 @@ const Payment = () => {
     try {
       await paymentWidget?.requestPayment({
         orderId: shortid.generate(),
-        orderName: items.length === 1 ? items[0].description :`${items[0].description} 외 ${items.length}`,
+        orderName:
+          items.length === 1
+            ? items[0].description
+            : `${items[0].description} 외 ${items.length}`,
         customerName: name,
         customerEmail: email,
         customerMobilePhone: phone,
@@ -314,27 +316,37 @@ const Payment = () => {
                   )}
                 />
                 <div className="flex items-center justify-between mt-2">
-                  <label htmlFor="point" className="text-[14px] font-medium">적립금 사용</label>
-                  <input
-                    className="flex h-10 w-[90%] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    id="point"
-                    name="point"
-                    value={point}
-                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => {
-                      const newPoint = parseInt(e.target.value, 10)
-                      if (isNaN(newPoint) || newPoint <= 0) {
-                        setPoint(0);
-                        return;
-                      }
-                      if (newPoint > userPoint) {
-                        alert("보유 적립금을 초과하였습니다.");
-                        setPoint(0);
-                        return;
-                      }
-                      setPoint(newPoint);
-                    }}
-                  />
-                  <p className="text-[14px]">보유 적립금 <span className="text-orange-500 font-bold">{userPoint.toLocaleString()}</span>원</p>
+                  <label htmlFor="point" className="text-[14px] font-medium">
+                    적립금 사용
+                  </label>
+                  <div className="w-[90%] flex items-center gap-3">
+                    <input
+                      className="flex h-10  rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      id="point"
+                      name="point"
+                      value={point}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const newPoint = parseInt(e.target.value, 10);
+                        if (isNaN(newPoint) || newPoint <= 0) {
+                          setPoint(0);
+                          return;
+                        }
+                        if (newPoint > userPoint) {
+                          alert("보유 적립금을 초과하였습니다.");
+                          setPoint(0);
+                          return;
+                        }
+                        setPoint(newPoint);
+                      }}
+                    />
+                    <p className="text-[14px]">
+                      보유 적립금{" "}
+                      <span className="text-orange-500 font-bold">
+                        {userPoint.toLocaleString()}
+                      </span>
+                      원
+                    </p>
+                  </div>
                 </div>
               </div>
             </section>
@@ -378,7 +390,7 @@ const Payment = () => {
                     <TableRow className={cn("bg-slate-100")}>
                       <TableCell className="font-medium">총 결제금액</TableCell>
                       <TableCell className="text-right font-bold text-blue-500">
-                        {totalPay(disCount,price,point)?.toLocaleString()}원
+                        {totalPay(disCount, price, point)?.toLocaleString()}원
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -386,7 +398,9 @@ const Payment = () => {
               </div>
               <div className="bg-slate-200 p-3">
                 <p>
-                  <span className="text-blue-500 font-bold">{price * 0.01} </span>
+                  <span className="text-blue-500 font-bold">
+                    {price * 0.01}{" "}
+                  </span>
                   포인트 적립 예정
                 </p>
               </div>
