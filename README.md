@@ -14,6 +14,10 @@
 
 URL : http://closetPayment.vercel.app
 
+## Blog Url
+
+URL : https://reactprac.tistory.com/47
+
 ## 핵심 기능
 
 1. 토스 페이먼츠 연동<br/>
