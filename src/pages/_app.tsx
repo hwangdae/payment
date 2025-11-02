@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { useRouter } from "next/router";
 import { RecoilRoot } from "recoil";
-
+import Head from "next/head";
 
 const Pretendard = localFont({
   src: [
@@ -65,6 +65,10 @@ export default function App({ Component, pageProps }: AppProps) {
   }`;
   return (
     <RecoilRoot>
+      <Head>
+        <title>Closet</title>
+        <meta name="description" content="옷 결제 서비스" />
+      </Head>
       <main className={`${Pretendard.className} ${maincss}`}>
         {router.pathname === "/" || router.pathname === "/detail/[id]" ? (
           <Sidebar />
