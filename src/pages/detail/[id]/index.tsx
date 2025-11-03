@@ -8,13 +8,7 @@ import PriceInfo from "@/components/detailMerchandise/PriceInfo";
 import SelectForm from "@/components/detailMerchandise/SelectForm";
 import Image from "next/image";
 
-const Detail = () => {
-  const router = useRouter();
-  const { id } = router.query;
-
-  const merchandise = MERCHANDISES.find((merchandise: MerchandiseType) => {
-    return merchandise.id === id;
-  });
+const Detail = ({ merchandise }: { merchandise: MerchandiseType }) => {
 
   return (
     <main className="w-[80%]">
@@ -24,13 +18,19 @@ const Detail = () => {
       <h2 className="py-4 font-bold">{merchandise?.description}</h2>
       <div className="flex gap-4">
         <h1 className="flex align-center justify-center border h-[600px]">
-          <Image priority={true} width={500} height={600} src={merchandise!.image} alt="상품 이미지" />
+          <Image
+            priority={true}
+            width={500}
+            height={600}
+            src={merchandise!.image}
+            alt="상품 이미지"
+          />
         </h1>
         <div className="w-[35%]">
           <ProductInfo merchandise={merchandise} />
           <DeliveryInfo />
           <PriceInfo merchandise={merchandise} />
-          <SelectForm merchandise={merchandise}/>
+          <SelectForm merchandise={merchandise} />
         </div>
       </div>
     </main>
@@ -39,8 +39,15 @@ const Detail = () => {
 
 export default Detail;
 
-export const getServerSideProps = async () => {
+export async function getServerSideProps(context: any) {
+  const { id } = context.query;
+  const merchandise = MERCHANDISES.find((m: MerchandiseType) => m.id === id);
+
+  if (!merchandise) {
+    return { notFound: true };
+  }
+
   return {
-    props: {},
+    props: { merchandise },
   };
-};
+}

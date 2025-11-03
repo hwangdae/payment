@@ -5,53 +5,52 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import { useRouter } from "next/router";
 import { RecoilRoot } from "recoil";
 
-
 const Pretendard = localFont({
   src: [
     {
       path: "../fonts/Pretendard-Black.woff2",
       weight: "900",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-ExtraBold.woff2",
       weight: "800",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-Bold.woff2",
       weight: "700",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-SemiBold.woff2",
       weight: "600",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-Medium.woff2",
       weight: "500",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-Regular.woff2",
       weight: "400",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-Light.woff2",
       weight: "300",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-ExtraLight.woff2",
       weight: "200",
-      style: "nomal",
+      style: "normal",
     },
     {
       path: "../fonts/Pretendard-Thin.woff2",
       weight: "100",
-      style: "nomal",
+      style: "normal",
     },
   ],
 });

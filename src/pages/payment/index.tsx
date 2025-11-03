@@ -423,8 +423,8 @@ const Payment = () => {
 
 export default Payment;
 
-export const getServerSideProps = async () => {
-  return {
-    props: {},
-  };
-};
+// export const getServerSideProps = async () => {
+//   return {
+//     props: {},
+//   };
+// };
