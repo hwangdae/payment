@@ -53,7 +53,7 @@ const SelectForm = ({ merchandise }: MerchandiseProps) => {
 
     setItems([...items, itemToAdd]);
   };
-
+  console.log(items)
   const price = items
     .map((item: MerchandiseType) => {
       return item?.price;
