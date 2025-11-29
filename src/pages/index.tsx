@@ -16,7 +16,7 @@ const Home = () => {
         <title>홈 | Closet</title>
       </Head>
       <main>
-        <ul className="grgid grid-cols-5 gap-4">
+        <ul className="grid grid-cols-5 gap-4">
           {MERCHANDISES.filter((merchandise) => {
             return category === "all" || merchandise.category === category;
           }).map((merchandise: MerchandiseType) => {
